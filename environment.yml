@@ -1,0 +1,14 @@
+name: ams
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python>=3.8
+  - ipython
+  - lightgbm  # https://github.com/Quantco/lightgbm-stability-feedstock/issues/2
+  - econml
+  - matplotlib-base
+  - causalml>=0.14
+  - jupyter
+  - pandas
+  - numpy
