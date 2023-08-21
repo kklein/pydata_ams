@@ -15,18 +15,18 @@ def gen_covariates(n: int) -> pd.DataFrame:
 
     chef_ratings = rng.normal(loc=6.8, scale=2, size=n)
 
-    gaz_stove_scores = chef_ratings + rng.normal(5, scale=3, size=n)
-    gaz_stove_probabilities = (
-        MinMaxScaler().fit_transform(gaz_stove_scores.reshape(-1, 1)).flatten()
+    gas_stove_scores = chef_ratings + rng.normal(5, scale=3, size=n)
+    gas_stove_probabilities = (
+        MinMaxScaler().fit_transform(gas_stove_scores.reshape(-1, 1)).flatten()
     )
-    gaz_stoves = np.where(gaz_stove_probabilities >= 0.5, 1, 0)
+    gas_stoves = np.where(gas_stove_probabilities >= 0.5, 1, 0)
 
     df = pd.DataFrame(
         {
             "age": ages,
             "nationality": nationalities,
             "chef_reating": chef_ratings,
-            "gaz_stove": gaz_stoves,
+            "gas_stove": gas_stoves,
         }
     )
     df["nationality"] = df["nationality"].astype("category")
@@ -42,9 +42,27 @@ def _f_mu_age(age, x_max=50):
     return MinMaxScaler().fit_transform(raws.to_numpy().reshape(-1, 1)).flatten()
 
 
+def _f_mu_nationality(nationality):
+    return np.zeros(len(nationality))
+
+
+def _f_mu_chef_rating(chef_rating):
+    return np.zeros(len(chef_rating))
+
+
+def _f_mu_gas_stove(gas_stove):
+    return np.zeros(len(gas_stove))
+
+
 def gen_outcomes(df_covariates: pd.DataFrame):
     n = len(df_covariates)
-    mu = _f_mu_age(df_covariates["age"]) + rng.normal(loc=0, scale=10, size=n)
+    mu = (
+        _f_mu_age(df_covariates["age"])
+        + _f_mu_nationality(df_covariates["nationality"])
+        + _f_mu_chef_rating(df_covariates["chef_rating"])
+        + _f_mu_gas_stove(df_covariates["gas_stove"])
+        + rng.normal(loc=0, scale=10, size=n)
+    )
     treatment_effect = np.zeros(n)
 
     outcome = mu + treatment_effect
