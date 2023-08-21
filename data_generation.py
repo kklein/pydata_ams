@@ -34,5 +34,31 @@ def gen_covariates(n: int) -> pd.DataFrame:
     return df
 
 
+def _f_mu_age(age):
+    def f_raw(x):
+        return 2500 - (x - 50) ** 2
+
+    raws = age.apply(f_raw)
+    return MinMaxScaler().fit_transform(raws.to_numpy().reshape(-1, 1)).flatten()
+
+
+def gen_outcomes(df_covariates: pd.DataFrame):
+    n = len(df_covariates)
+    mu = _f_mu_age(df_covariates["age"]) + rng.normal(loc=0, scale=10, size=n)
+    treatment_effect = np.zeros(n)
+
+    outcome = mu + treatment_effect
+
+    df_outcomes = pd.DataFrame(
+        {
+            "mu": mu,
+            "treatment_effect": treatment_effect,
+            "outcome": outcome,
+        }
+    )
+
+    return pd.concat([df_covariates, df_outcomes], axis=1)
+
+
 df = gen_covariates(100)
-df
+df_final = gen_outcomes(df)
