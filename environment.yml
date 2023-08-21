@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - nodefaults
 dependencies:
-  - python>=3.8
+  - python>=3.10
   - ipython
   - lightgbm  # https://github.com/Quantco/lightgbm-stability-feedstock/issues/2
   - econml
@@ -12,3 +12,5 @@ dependencies:
   - jupyter
   - pandas
   - numpy
+  - pre-commit
+  - sklearn
