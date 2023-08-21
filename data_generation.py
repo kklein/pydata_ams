@@ -34,9 +34,9 @@ def gen_covariates(n: int) -> pd.DataFrame:
     return df
 
 
-def _f_mu_age(age):
+def _f_mu_age(age, x_max=50):
     def f_raw(x):
-        return 2500 - (x - 50) ** 2
+        return x_max**2 - (x - x_max) ** 2
 
     raws = age.apply(f_raw)
     return MinMaxScaler().fit_transform(raws.to_numpy().reshape(-1, 1)).flatten()
