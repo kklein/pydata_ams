@@ -53,7 +53,10 @@ def treatment_assignments(
         return RNG.binomial(n=1, p=0.5, size=n)
     score = _f_p_chef_rating(df["chef_rating"]) + RNG.normal(loc=0, scale=0.5, size=n)
     # TODO: This transformation violates positivity - we need to smoothen!
-    return MinMaxScaler().fit_transform(score.to_numpy().reshape(-1, 1)).flatten()
+    normalized_scores = (
+        MinMaxScaler().fit_transform(score.to_numpy().reshape(-1, 1)).flatten()
+    )
+    return RNG.binomial(n=1, p=normalized_scores, size=n)
 
 
 def _f_mu_age(age, x_max=50):
