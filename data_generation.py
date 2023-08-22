@@ -7,6 +7,7 @@ NATIONS = np.array(["India", "Italy", "Iceland", "Iraq", "Israel", "Indonesia"])
 
 
 def gen_covariates(n: int) -> pd.DataFrame:
+    """Generate covariates."""
     # TODO: Consider using scipy's truncnormal distribution instead.
     ages = rng.normal(loc=50, scale=20, size=n)
     ages = np.where(ages < 0, 0, ages)
@@ -63,6 +64,7 @@ def _f_mu_gas_stove(gas_stove):
 
 
 def gen_outcomes(df_covariates: pd.DataFrame):
+    """Generate outcomes."""
     n = len(df_covariates)
     mu = (
         _f_mu_age(df_covariates["age"])
