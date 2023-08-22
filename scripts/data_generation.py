@@ -7,6 +7,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 RNG = np.random.default_rng(seed=1337)
 NATIONS = np.array(["India", "Italy", "Iceland", "Iraq", "Israel", "Indonesia"])
+MIN_P = 0.1
+MAX_P = 0.9
 
 
 def gen_covariates(n: int) -> pd.DataFrame:
@@ -47,14 +49,15 @@ def _f_p_chef_rating(chef_rating):
 def treatment_assignments(
     df_covariates: pd.DataFrame, is_rct: bool = False
 ) -> np.ndarray:
-    """Generate treatment assignments for all units based on covariates."""
+    """Generate treatment assignments for all units."""
     n = len(df_covariates)
     if is_rct:
         return RNG.binomial(n=1, p=0.5, size=n)
+
     score = _f_p_chef_rating(df["chef_rating"]) + RNG.normal(loc=0, scale=0.5, size=n)
     # We want to ensure positivity and therefore cap the probabilities on both ends.
     normalized_scores = (
-        MinMaxScaler(feature_range=(0.1, 0.9))
+        MinMaxScaler(feature_range=(MIN_P, MAX_P))
         .fit_transform(score.to_numpy().reshape(-1, 1))
         .flatten()
     )
@@ -89,26 +92,35 @@ def _f_mu_gas_stove(gas_stove):
     return gas_stove
 
 
-def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataFrame:
-    """Generate outcomes."""
+def _mu(df_covariates) -> np.ndarray:
     n = len(df_covariates)
-    mu = (
+    return (
         _f_mu_age(df_covariates["age"])
         + _f_mu_nationality(df_covariates["nationality"])
         + _f_mu_chef_rating(df_covariates["chef_rating"])
         + _f_mu_gas_stove(df_covariates["gas_stove"])
         + RNG.normal(loc=0, scale=0.5, size=n)
     )
-    treatment_effect = np.zeros(n)
 
-    outcome = mu + treatment * treatment_effect
+
+def _tau(df_covariates) -> np.ndarray:
+    n = len(df_covariates)
+    return np.zeros(n)
+
+
+def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataFrame:
+    """Generate outcomes."""
+    mu = _mu(df_covariates)
+    tau = _tau(df_covariates)
+
+    outcome = mu + treatment * tau
 
     df_outcomes = pd.DataFrame(
         {
             "mu": mu,
             # TODO: Should we call the treatment 'stirring'?
             "treatment": treatment,
-            "treatment_effect": treatment_effect,
+            "treatment_effect": tau,
             # TODO: Should we call the outcome 'pleasure'?
             "outcome": outcome,
         }
