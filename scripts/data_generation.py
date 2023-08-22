@@ -52,9 +52,11 @@ def treatment_assignments(
     if is_rct:
         return RNG.binomial(n=1, p=0.5, size=n)
     score = _f_p_chef_rating(df["chef_rating"]) + RNG.normal(loc=0, scale=0.5, size=n)
-    # TODO: This transformation violates positivity - we need to smoothen!
+    # We want to ensure positivity and therefore cap the probabilities on both ends.
     normalized_scores = (
-        MinMaxScaler().fit_transform(score.to_numpy().reshape(-1, 1)).flatten()
+        MinMaxScaler(feature_range=(0.1, 0.9))
+        .fit_transform(score.to_numpy().reshape(-1, 1))
+        .flatten()
     )
     return RNG.binomial(n=1, p=normalized_scores, size=n)
 
@@ -104,8 +106,10 @@ def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataF
     df_outcomes = pd.DataFrame(
         {
             "mu": mu,
+            # TODO: Should we call the treatment 'stirring'?
             "treatment": treatment,
             "treatment_effect": treatment_effect,
+            # TODO: Should we call the outcome 'pleasure'?
             "outcome": outcome,
         }
     )
