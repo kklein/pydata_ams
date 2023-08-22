@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+from git_root import git_root
 from sklearn.preprocessing import MinMaxScaler
 
 rng = np.random.default_rng(seed=1337)
@@ -90,3 +93,4 @@ def gen_outcomes(df_covariates: pd.DataFrame):
 
 df = gen_covariates(100)
 df_final = gen_outcomes(df)
+df_final.to_csv(Path(git_root()) / "data" / "risotto.csv")
