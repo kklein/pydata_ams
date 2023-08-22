@@ -38,6 +38,11 @@ def gen_covariates(n: int) -> pd.DataFrame:
     return df
 
 
+def treatment_assignments(df_covariates: pd.DataFrame) -> np.ndarray:
+    """Generate treatment assignments for all units based on covariates."""
+    return np.zeros(len(df_covariates))
+
+
 def _f_mu_age(age, x_max=50):
     def f_raw(x):
         return x_max**2 - (x - x_max) ** 2
@@ -66,7 +71,7 @@ def _f_mu_gas_stove(gas_stove):
     return gas_stove
 
 
-def gen_outcomes(df_covariates: pd.DataFrame):
+def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataFrame:
     """Generate outcomes."""
     n = len(df_covariates)
     mu = (
@@ -78,11 +83,12 @@ def gen_outcomes(df_covariates: pd.DataFrame):
     )
     treatment_effect = np.zeros(n)
 
-    outcome = mu + treatment_effect
+    outcome = mu + treatment * treatment_effect
 
     df_outcomes = pd.DataFrame(
         {
             "mu": mu,
+            "treatment": treatment,
             "treatment_effect": treatment_effect,
             "outcome": outcome,
         }
@@ -91,6 +97,8 @@ def gen_outcomes(df_covariates: pd.DataFrame):
     return pd.concat([df_covariates, df_outcomes], axis=1)
 
 
-df = gen_covariates(100)
-df_final = gen_outcomes(df)
-df_final.to_csv(Path(git_root()) / "data" / "risotto.csv")
+if __name__ == "__main__":
+    df = gen_covariates(100)
+    treatment = treatment_assignments(df)
+    df_final = gen_outcomes(df, treatment)
+    df_final.to_csv(Path(git_root()) / "data" / "risotto.csv")
