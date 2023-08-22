@@ -5,21 +5,23 @@ import pandas as pd
 from git_root import git_root
 from sklearn.preprocessing import MinMaxScaler
 
-rng = np.random.default_rng(seed=1337)
+RNG = np.random.default_rng(seed=1337)
 NATIONS = np.array(["India", "Italy", "Iceland", "Iraq", "Israel", "Indonesia"])
 
 
 def gen_covariates(n: int) -> pd.DataFrame:
     """Generate covariates."""
     # TODO: Consider using scipy's truncnormal distribution instead.
-    ages = rng.normal(loc=50, scale=20, size=n)
+    ages = RNG.normal(loc=50, scale=20, size=n)
     ages = np.where(ages < 0, 0, ages)
 
-    nationalities = rng.choice(NATIONS, size=n)
+    nationalities = RNG.choice(NATIONS, size=n)
 
-    chef_ratings = rng.normal(loc=6.8, scale=2, size=n)
+    chef_ratings = RNG.normal(loc=6.8, scale=2, size=n)
+    # We'd like to apply a logarithm afterwards.
+    chef_ratings = np.where(chef_ratings <= 0.1, 0.1, chef_ratings)
 
-    gas_stove_scores = chef_ratings + rng.normal(5, scale=3, size=n)
+    gas_stove_scores = chef_ratings + RNG.normal(5, scale=3, size=n)
     gas_stove_probabilities = (
         MinMaxScaler().fit_transform(gas_stove_scores.reshape(-1, 1)).flatten()
     )
@@ -38,9 +40,20 @@ def gen_covariates(n: int) -> pd.DataFrame:
     return df
 
 
-def treatment_assignments(df_covariates: pd.DataFrame) -> np.ndarray:
+def _f_p_chef_rating(chef_rating):
+    return chef_rating
+
+
+def treatment_assignments(
+    df_covariates: pd.DataFrame, is_rct: bool = False
+) -> np.ndarray:
     """Generate treatment assignments for all units based on covariates."""
-    return np.zeros(len(df_covariates))
+    n = len(df_covariates)
+    if is_rct:
+        return RNG.binomial(n=1, p=0.5, size=n)
+    score = _f_p_chef_rating(df["chef_rating"]) + RNG.normal(loc=0, scale=0.5, size=n)
+    # TODO: This transformation violates positivity - we need to smoothen!
+    return MinMaxScaler().fit_transform(score.to_numpy().reshape(-1, 1)).flatten()
 
 
 def _f_mu_age(age, x_max=50):
@@ -64,7 +77,7 @@ def _f_mu_nationality(nationality):
 
 
 def _f_mu_chef_rating(chef_rating):
-    return chef_rating
+    return np.log(chef_rating)
 
 
 def _f_mu_gas_stove(gas_stove):
@@ -79,7 +92,7 @@ def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataF
         + _f_mu_nationality(df_covariates["nationality"])
         + _f_mu_chef_rating(df_covariates["chef_rating"])
         + _f_mu_gas_stove(df_covariates["gas_stove"])
-        + rng.normal(loc=0, scale=0.5, size=n)
+        + RNG.normal(loc=0, scale=0.5, size=n)
     )
     treatment_effect = np.zeros(n)
 

@@ -35,14 +35,8 @@ stress interventional aspect
 
 ---
 
----
-
 # Why heterogeneity
 
 ---
 
 # Case study
-
----
-
-#
