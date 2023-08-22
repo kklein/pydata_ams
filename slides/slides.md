@@ -16,12 +16,24 @@ image: https://marp.app/og-image.jpg
 
 ---
 
-# When correlation fails
+# When prediction fails (?)
+
+![](../plots/why_prediction_fails.png)
+stress interventional aspect
+
+---
+
+![bg 50%](../plots/prediction_success.gv.png)
+![bg 50%](../plots/prediction_failure.gv.png)
+
+---
 
 - Interventions!
 - Jonas Peters example:
   https://www.youtube.com/watch?v=zvrcyqcN9Wo&list=PLzERW_Obpmv-_EXTV1zTmlv-Ab5Tfbp8X
 - https://matheusfacure.github.io/python-causality-handbook/01-Introduction-To-Causality.html
+
+---
 
 ---
 

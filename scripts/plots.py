@@ -31,20 +31,50 @@ def _set_axis_style(ax, labels):
 
 def plot_dgp_dag() -> None:
     """Generate directed acyclic graph describing data generating process."""
-    dot = graphviz.Digraph("dgp", comment="Data Generating Process", format="png")
+    dot = graphviz.Digraph(
+        "dgp",
+        comment="Data Generating Process",
+        format="png",
+        directory=_plot_root(),
+    )
     # TODO: To make a node/edge invisible use `style="invis"`.
-    dot.node("Age", "Age")
-    dot.node("Nationality", "Nationality")
-    dot.node("Chef_rating", "Chef rating")
-    dot.node("Gaz_stove", "Gaz stove")
-    dot.node("Stirring", "Stirring")
-    dot.node("Pleasure", "Pleasure")
-    dot.edge("Chef_rating", "Gaz_stove")
-    for covariate in ["Age", "Nationality", "Chef_rating", "Gaz_stove"]:
-        dot.edge(covariate, "Pleasure")
-        dot.edge(covariate, "Stirring")
-    dot.edge("Stirring", "Pleasure")
-    dot.render(directory="plots").replace("\\", "/")
+    dot.node("age", "Age")
+    dot.node("nationality", "Nationality")
+    dot.node("chef_rating", "Chef rating")
+    dot.node("gas_stove", "Gas stove")
+    dot.node("stirring", "Stirring")
+    dot.node("pleasure", "Pleasure")
+    dot.edge("chef_rating", "gas_stove")
+    for covariate in ["age", "nationality", "chef_rating", "gas_stove"]:
+        dot.edge(covariate, "pleasure")
+        dot.edge(covariate, "stirring")
+    dot.edge("stirring", "pleasure")
+    dot.render()
+
+
+def plot_prediction_failure_dags() -> None:
+    """Plot dags indicating why prediction might fail."""
+    dot_success = graphviz.Digraph(
+        "prediction_success",
+        format="png",
+        directory=_plot_root(),
+    )
+    dot_success.node("gas_stove", "Gas stove")
+    dot_success.node("pleasure", "Pleasure")
+    dot_success.edge("gas_stove", "pleasure")
+    dot_success.render()
+
+    dot_failure = graphviz.Digraph(
+        "prediction_failure",
+        format="png",
+        directory=_plot_root(),
+    )
+    dot_failure.node("gas_stove", "Gas stove")
+    dot_failure.node("pleasure", "Pleasure")
+    dot_failure.node("chef_rating", "Chef rating")
+    dot_failure.edge("chef_rating", "pleasure")
+    dot_failure.edge("chef_rating", "gas_stove")
+    dot_failure.render()
 
 
 def plot_why_prediction_fails() -> None:
@@ -65,3 +95,4 @@ def plot_why_prediction_fails() -> None:
 
 plot_dgp_dag()
 plot_why_prediction_fails()
+plot_prediction_failure_dags()
