@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 rng = np.random.default_rng(seed=1337)
-NATIONS = np.array(["Inidia", "Italy", "Iceland", "Iraq", "Isreal", "Indonesia"])
+NATIONS = np.array(["India", "Italy", "Iceland", "Iraq", "Israel", "Indonesia"])
 
 
 def gen_covariates(n: int) -> pd.DataFrame:
@@ -25,7 +25,7 @@ def gen_covariates(n: int) -> pd.DataFrame:
         {
             "age": ages,
             "nationality": nationalities,
-            "chef_reating": chef_ratings,
+            "chef_rating": chef_ratings,
             "gas_stove": gas_stoves,
         }
     )
@@ -43,15 +43,23 @@ def _f_mu_age(age, x_max=50):
 
 
 def _f_mu_nationality(nationality):
-    return np.zeros(len(nationality))
+    mapping = {
+        "India": 0.4,
+        "Italy": 1,
+        "Iceland": 0.2,
+        "Iraq": 0.5,
+        "Israel": 0.5,
+        "Indonesia": 0.6,
+    }
+    return nationality.apply(lambda x: mapping[str(x)])
 
 
 def _f_mu_chef_rating(chef_rating):
-    return np.zeros(len(chef_rating))
+    return chef_rating
 
 
 def _f_mu_gas_stove(gas_stove):
-    return np.zeros(len(gas_stove))
+    return gas_stove
 
 
 def gen_outcomes(df_covariates: pd.DataFrame):
@@ -61,7 +69,7 @@ def gen_outcomes(df_covariates: pd.DataFrame):
         + _f_mu_nationality(df_covariates["nationality"])
         + _f_mu_chef_rating(df_covariates["chef_rating"])
         + _f_mu_gas_stove(df_covariates["gas_stove"])
-        + rng.normal(loc=0, scale=10, size=n)
+        + rng.normal(loc=0, scale=0.5, size=n)
     )
     treatment_effect = np.zeros(n)
 
