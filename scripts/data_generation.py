@@ -29,9 +29,11 @@ def gen_covariates(n: int) -> pd.DataFrame:
 
     gas_stove_scores = chef_ratings + RNG.normal(5, scale=3, size=n)
     gas_stove_probabilities = (
-        MinMaxScaler().fit_transform(gas_stove_scores.reshape(-1, 1)).flatten()
+        MinMaxScaler(feature_range=(MIN_P, MAX_P))
+        .fit_transform(gas_stove_scores.reshape(-1, 1))
+        .flatten()
     )
-    gas_stoves = np.where(gas_stove_probabilities >= 0.5, 1, 0)
+    gas_stoves = RNG.binomial(n=1, p=gas_stove_probabilities, size=n)
 
     df = pd.DataFrame(
         {
