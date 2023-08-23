@@ -1,3 +1,4 @@
+from copy import deepcopy
 from functools import cache
 from pathlib import Path
 
@@ -77,8 +78,8 @@ def plot_prediction_failure_dags() -> None:
     dot_failure.render()
 
 
-def plot_why_prediction_fails() -> None:
-    """Plot violin plot indicating when prediction might fail."""
+@cache
+def _prediction_failure():
     df = _df_risotto()
     gas_stoves = df["gas_stove"].unique()
     data = [
@@ -90,7 +91,27 @@ def plot_why_prediction_fails() -> None:
     _set_axis_style(ax, gas_stoves)
     ax.set_xlabel("gas stove")
     ax.set_ylabel("pleasure")
-    fig.savefig(_plot_root() / "why_prediction_fails.png")
+    return fig, ax
+
+
+def plot_why_prediction_fails() -> None:
+    """Plot violin plot indicating when prediction might fail."""
+    fig, ax = deepcopy(_prediction_failure())
+    fig.savefig(_plot_root() / "why_prediction_fails_1.png")
+
+    fig, ax = deepcopy(_prediction_failure())
+    x0, y0 = 1, 2
+    x1, y1 = 2, 2
+    ax.plot([x0, x1], [y0, y1], "o")
+    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.1)
+    fig.savefig(_plot_root() / "why_prediction_fails_2.png")
+
+    fig, ax = deepcopy(_prediction_failure())
+    x0, y0 = 1, 2
+    x1, y1 = 2, 4
+    ax.plot([x0, x1], [y0, y1], "o")
+    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.1)
+    fig.savefig(_plot_root() / "why_prediction_fails_3.png")
 
 
 plot_dgp_dag()

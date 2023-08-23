@@ -18,7 +18,7 @@ image: https://marp.app/og-image.jpg
 
 # When prediction fails (?)
 
-![](../plots/why_prediction_fails.png)
+![bg right 100%](../plots/why_prediction_fails_1.png)
 stress interventional aspect
 
 ---
@@ -28,10 +28,16 @@ stress interventional aspect
 
 ---
 
+![bg 100%](../plots/why_prediction_fails_2.png)
+![bg 100%](../plots/why_prediction_fails_3.png)
+
+---
+
 - Interventions!
 - Jonas Peters example:
   https://www.youtube.com/watch?v=zvrcyqcN9Wo&list=PLzERW_Obpmv-_EXTV1zTmlv-Ab5Tfbp8X
 - https://matheusfacure.github.io/python-causality-handbook/01-Introduction-To-Causality.html
+- Quote from prediction machines
 
 ---
 
