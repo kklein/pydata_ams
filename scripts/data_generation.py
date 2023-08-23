@@ -19,9 +19,13 @@ def gen_covariates(n: int) -> pd.DataFrame:
 
     nationalities = RNG.choice(NATIONS, size=n)
 
-    chef_ratings = RNG.normal(loc=6.8, scale=2, size=n)
+    chef_ratings_raw = RNG.normal(loc=6.8, scale=2, size=n)
     # We'd like to apply a logarithm afterwards.
-    chef_ratings = np.where(chef_ratings <= 0.1, 0.1, chef_ratings)
+    chef_ratings = (
+        MinMaxScaler(feature_range=(0.1, 1))
+        .fit_transform(chef_ratings_raw.reshape(-1, 1))
+        .flatten()
+    )
 
     gas_stove_scores = chef_ratings + RNG.normal(5, scale=3, size=n)
     gas_stove_probabilities = (
@@ -82,12 +86,13 @@ def _f_mu_gas_stove(gas_stove):
 
 def _mu(df_covariates) -> np.ndarray:
     n = len(df_covariates)
-    return (
+    score = (
         _f_mu_age(df_covariates["age"])
         + _f_mu_chef_rating(df_covariates["chef_rating"])
         + _f_mu_gas_stove(df_covariates["gas_stove"])
         + RNG.normal(loc=0, scale=0.5, size=n)
     )
+    return MinMaxScaler().fit_transform(score.to_numpy().reshape(-1, 1)).flatten()
 
 
 def _f_tau_nationality(nationality):
