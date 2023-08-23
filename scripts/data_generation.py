@@ -119,6 +119,9 @@ def _tau(df_covariates) -> np.ndarray:
     )
 
 
+# TODO: Replace pleasure outcome by how much someone is willing to pay for it!!!!
+
+
 def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataFrame:
     """Generate outcomes."""
     mu = _mu(df_covariates)
