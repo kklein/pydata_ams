@@ -72,18 +72,6 @@ def _f_mu_age(age, x_max=50):
     return MinMaxScaler().fit_transform(raws.to_numpy().reshape(-1, 1)).flatten()
 
 
-def _f_mu_nationality(nationality):
-    mapping = {
-        "India": 0.4,
-        "Italy": 1,
-        "Iceland": 0.2,
-        "Iraq": 0.5,
-        "Israel": 0.5,
-        "Indonesia": 0.6,
-    }
-    return nationality.apply(lambda x: mapping[str(x)])
-
-
 def _f_mu_chef_rating(chef_rating):
     return np.log(chef_rating)
 
@@ -96,16 +84,32 @@ def _mu(df_covariates) -> np.ndarray:
     n = len(df_covariates)
     return (
         _f_mu_age(df_covariates["age"])
-        + _f_mu_nationality(df_covariates["nationality"])
         + _f_mu_chef_rating(df_covariates["chef_rating"])
         + _f_mu_gas_stove(df_covariates["gas_stove"])
         + RNG.normal(loc=0, scale=0.5, size=n)
     )
 
 
+def _f_tau_nationality(nationality):
+    mapping = {
+        "India": 0.4,
+        "Italy": 1,
+        "Iceland": 0.2,
+        "Iraq": 0.5,
+        "Israel": 0.5,
+        "Indonesia": 0.6,
+    }
+    return nationality.apply(lambda x: mapping[str(x)])
+
+
 def _tau(df_covariates) -> np.ndarray:
     n = len(df_covariates)
-    return np.zeros(n)
+    return (
+        _f_tau_nationality(df["nationality"])
+        # Make sure the variance of the noise is sufficient to produce some negative
+        # tratment effects.
+        + RNG.normal(0, 0.2, size=n)
+    )
 
 
 def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataFrame:
