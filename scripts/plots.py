@@ -44,12 +44,12 @@ def plot_dgp_dag() -> None:
     dot.node("chef_rating", "Chef rating")
     dot.node("gas_stove", "Gas stove")
     dot.node("stirring", "Stirring")
-    dot.node("pleasure", "Pleasure")
+    dot.node("payment", "payment")
     dot.edge("chef_rating", "gas_stove")
     for covariate in ["age", "nationality", "chef_rating", "gas_stove"]:
-        dot.edge(covariate, "pleasure")
+        dot.edge(covariate, "payment")
         dot.edge(covariate, "stirring")
-    dot.edge("stirring", "pleasure")
+    dot.edge("stirring", "payment")
     dot.render()
 
 
@@ -61,8 +61,8 @@ def plot_prediction_failure_dags() -> None:
         directory=_plot_root(),
     )
     dot_success.node("gas_stove", "Gas stove")
-    dot_success.node("pleasure", "Pleasure")
-    dot_success.edge("gas_stove", "pleasure")
+    dot_success.node("payment", "payment")
+    dot_success.edge("gas_stove", "payment")
     dot_success.render()
 
     dot_failure = graphviz.Digraph(
@@ -71,9 +71,9 @@ def plot_prediction_failure_dags() -> None:
         directory=_plot_root(),
     )
     dot_failure.node("gas_stove", "Gas stove")
-    dot_failure.node("pleasure", "Pleasure")
+    dot_failure.node("payment", "payment")
     dot_failure.node("chef_rating", "Chef rating")
-    dot_failure.edge("chef_rating", "pleasure")
+    dot_failure.edge("chef_rating", "payment")
     dot_failure.edge("chef_rating", "gas_stove")
     dot_failure.render()
 
@@ -83,14 +83,14 @@ def _prediction_failure():
     df = _df_risotto()
     gas_stoves = df["gas_stove"].unique()
     data = [
-        df[df["gas_stove"] == gas_stove]["outcome"].values for gas_stove in gas_stoves
+        df[df["gas_stove"] == gas_stove]["payment"].values for gas_stove in gas_stoves
     ]
 
     fig, ax = plt.subplots()
     ax.violinplot(dataset=data)
     _set_axis_style(ax, gas_stoves)
     ax.set_xlabel("gas stove")
-    ax.set_ylabel("pleasure")
+    ax.set_ylabel("payment")
     return fig, ax
 
 
