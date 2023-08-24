@@ -9,6 +9,8 @@ RNG = np.random.default_rng(seed=1337)
 NATIONS = np.array(["India", "Italy", "Iceland", "Iraq", "Israel", "Indonesia"])
 MIN_P = 0.1
 MAX_P = 0.9
+MIN_PRICE = 1
+MAX_PRICE = 42
 
 
 def gen_covariates(n: int) -> pd.DataFrame:
@@ -94,7 +96,11 @@ def _mu(df_covariates) -> np.ndarray:
         + _f_mu_gas_stove(df_covariates["gas_stove"])
         + RNG.normal(loc=0, scale=0.5, size=n)
     )
-    return MinMaxScaler().fit_transform(score.to_numpy().reshape(-1, 1)).flatten()
+    return (
+        MinMaxScaler(feature_range=(MIN_PRICE, MAX_PRICE))
+        .fit_transform(score.to_numpy().reshape(-1, 1))
+        .flatten()
+    )
 
 
 def _f_tau_nationality(nationality):
@@ -114,12 +120,9 @@ def _tau(df_covariates) -> np.ndarray:
     return (
         _f_tau_nationality(df["nationality"])
         # Make sure the variance of the noise is sufficient to produce some negative
-        # tratment effects.
+        # treatment effects.
         + RNG.normal(0, 0.2, size=n)
     )
-
-
-# TODO: Replace pleasure outcome by how much someone is willing to pay for it!!!!
 
 
 def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataFrame:
@@ -132,11 +135,9 @@ def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataF
     df_outcomes = pd.DataFrame(
         {
             "mu": mu,
-            # TODO: Should we call the treatment 'stirring'?
-            "treatment": treatment,
+            "stirring": treatment,
             "treatment_effect": tau,
-            # TODO: Should we call the outcome 'pleasure'?
-            "outcome": outcome,
+            "payment": outcome,
         }
     )
 
