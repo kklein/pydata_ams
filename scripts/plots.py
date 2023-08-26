@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from git_root import git_root
+from matplotlib.patches import Patch
 
 
 def _root() -> Path:
@@ -114,6 +115,43 @@ def plot_why_prediction_fails() -> None:
     fig.savefig(_plot_root() / "why_prediction_fails_3.png")
 
 
+def _treatment_effect_hist():
+    df = _df_risotto()
+    fig, ax = plt.subplots()
+    n, _, patches = ax.hist(df["treatment_effect"])
+    ax.set_xlabel("treatment effect")
+    return fig, ax, n, patches
+
+
+def plot_treatment_effects(threshold: int) -> None:
+    """Plot treatment effects."""
+    fig, ax, _, _ = deepcopy(_treatment_effect_hist())
+    fig.savefig(_plot_root() / "treatment_effects_1.png")
+
+    fig, ax, n, patches = deepcopy(_treatment_effect_hist())
+    for i in range(len(n)):
+        x_left = patches[i].get_x()
+        x_right = x_left + patches[i].get_width()
+        if x_right < 1:
+            patches[i].set_facecolor("red")
+        elif x_left >= 1:
+            patches[i].set_facecolor("green")
+        else:
+            patches[i].set_facecolor("grey")
+
+    ax.axvline(1, color="orange")
+    ax.legend(
+        handles=[
+            Patch(facecolor="green", edgecolor="green", label="profit"),
+            Patch(facecolor="red", edgecolor="red", label="loss"),
+            Patch(facecolor="grey", edgecolor="grey", label="on the edge"),
+        ]
+    )
+
+    fig.savefig(_plot_root() / "treatment_effects_2.png")
+
+
 plot_dgp_dag()
 plot_why_prediction_fails()
 plot_prediction_failure_dags()
+plot_treatment_effects(threshold=1)
