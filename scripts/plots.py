@@ -8,6 +8,11 @@ import numpy as np
 import pandas as pd
 from git_root import git_root
 from matplotlib.patches import Patch
+from econml.dr import DRLearner
+import lightgbm as lgbm
+
+
+RNG = np.random.default_rng(seed=1337)
 
 
 def _root() -> Path:
@@ -151,7 +156,36 @@ def plot_treatment_effects(threshold: int) -> None:
     fig.savefig(_plot_root() / "treatment_effects_2.png")
 
 
+def plot_cate_estimates():
+    """Plot comparison of cate estimates to actuals."""
+    outcome = "payment"
+    treatment = "stirring"
+    numerical_covariates = ["age", "chef_rating", "gas_stove"]
+    df = _df_risotto()
+
+    X = pd.concat([df[numerical_covariates], pd.get_dummies(df["nationality"])], axis=1)
+
+    test_indicator = RNG.binomial(n=1, p=.2, size=len(X))
+
+    est = DRLearner(
+        model_propensity=lgbm.LGBMClassifier(verbosity=-1),
+        model_regression=lgbm.LGBMRegressor(verbosity=-1),
+        model_final=lgbm.LGBMRegressor(verbosity=-1, num_leaves=2),
+    )
+    est.fit(
+        df[test_indicator==0][outcome], df[test_indicator==0][treatment], X=X[test_indicator==0]
+    )
+    cate_estimates_econml = est.effect(X[test_indicator==1])
+    fig, ax = plt.subplots()
+    ax.set_xlabel("estimate")
+    ax.set_ylabel("actual")
+    ax.scatter(cate_estimates_econml, df[test_indicator==1]["treatment_effect"])
+
+    fig.savefig(_plot_root() / "cate_estimates.png")
+
+
 plot_dgp_dag()
 plot_why_prediction_fails()
 plot_prediction_failure_dags()
 plot_treatment_effects(threshold=1)
+plot_cate_estimates()
