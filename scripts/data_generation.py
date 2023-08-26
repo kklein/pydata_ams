@@ -9,8 +9,8 @@ RNG = np.random.default_rng(seed=1337)
 NATIONS = np.array(["India", "Italy", "Iceland", "Iraq", "Israel", "Indonesia"])
 MIN_P = 0.1
 MAX_P = 0.9
-MIN_PRICE = 1
-MAX_PRICE = 42
+MIN_PRICE = 2.8
+MAX_PRICE = 32.2
 
 
 def gen_covariates(n: int) -> pd.DataFrame:
@@ -105,24 +105,22 @@ def _mu(df_covariates) -> np.ndarray:
 
 def _f_tau_nationality(nationality):
     mapping = {
-        "India": 0.4,
-        "Italy": 1,
-        "Iceland": 0.2,
-        "Iraq": 0.5,
-        "Israel": 0.5,
-        "Indonesia": 0.6,
+        "India": 0.8,
+        "Italy": 2,
+        "Iceland": 0.4,
+        "Iraq": 1.1,
+        "Israel": 0.4,
+        "Indonesia": 0.7,
     }
-    return nationality.apply(lambda x: mapping[str(x)])
+    result = nationality.apply(lambda x: mapping[str(x)])
+    return result.astype("float")
 
 
 def _tau(df_covariates) -> np.ndarray:
     n = len(df_covariates)
-    return (
-        _f_tau_nationality(df["nationality"])
-        # Make sure the variance of the noise is sufficient to produce some negative
-        # treatment effects.
-        + RNG.normal(0, 0.2, size=n)
-    )
+    tau_nationality = _f_tau_nationality(df["nationality"])
+    noise = RNG.normal(0, 0.1, size=n)
+    return tau_nationality + noise
 
 
 def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataFrame:
@@ -145,7 +143,7 @@ def gen_outcomes(df_covariates: pd.DataFrame, treatment: np.ndarray) -> pd.DataF
 
 
 if __name__ == "__main__":
-    df = gen_covariates(100)
+    df = gen_covariates(10_000)
     treatment = treatment_assignments(df)
     df_final = gen_outcomes(df, treatment)
     df_final.to_csv(Path(git_root()) / "data" / "risotto.csv")
