@@ -3,14 +3,13 @@ from functools import cache
 from pathlib import Path
 
 import graphviz
+import lightgbm as lgbm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from econml.dr import DRLearner
 from git_root import git_root
 from matplotlib.patches import Patch
-from econml.dr import DRLearner
-import lightgbm as lgbm
-
 
 RNG = np.random.default_rng(seed=1337)
 
@@ -50,7 +49,7 @@ def plot_dgp_dag() -> None:
     dot.node("chef_rating", "Chef rating")
     dot.node("gas_stove", "Gas stove")
     dot.node("stirring", "Stirring")
-    dot.node("payment", "payment")
+    dot.node("payment", "Payment")
     dot.edge("chef_rating", "gas_stove")
     for covariate in ["age", "nationality", "chef_rating", "gas_stove"]:
         dot.edge(covariate, "payment")
@@ -88,6 +87,7 @@ def plot_prediction_failure_dags() -> None:
 def _prediction_failure():
     df = _df_risotto()
     gas_stoves = df["gas_stove"].unique()
+    gas_stoves.sort()
     data = [
         df[df["gas_stove"] == gas_stove]["payment"].values for gas_stove in gas_stoves
     ]
@@ -102,21 +102,22 @@ def _prediction_failure():
 
 def plot_why_prediction_fails() -> None:
     """Plot violin plot indicating when prediction might fail."""
+    x0, y0 = 1, 4
     fig, ax = deepcopy(_prediction_failure())
+    ax.plot([x0], [y0], "o")
     fig.savefig(_plot_root() / "why_prediction_fails_1.png")
 
     fig, ax = deepcopy(_prediction_failure())
-    x0, y0 = 1, 2
-    x1, y1 = 2, 2
+
+    x1, y1 = 2, 4
     ax.plot([x0, x1], [y0, y1], "o")
-    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.1)
+    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.2)
     fig.savefig(_plot_root() / "why_prediction_fails_2.png")
 
     fig, ax = deepcopy(_prediction_failure())
-    x0, y0 = 1, 2
-    x1, y1 = 2, 4
+    x1, y1 = 2, 11
     ax.plot([x0, x1], [y0, y1], "o")
-    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.1)
+    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.2)
     fig.savefig(_plot_root() / "why_prediction_fails_3.png")
 
 
@@ -165,7 +166,7 @@ def plot_cate_estimates():
 
     X = pd.concat([df[numerical_covariates], pd.get_dummies(df["nationality"])], axis=1)
 
-    test_indicator = RNG.binomial(n=1, p=.2, size=len(X))
+    test_indicator = RNG.binomial(n=1, p=0.2, size=len(X))
 
     est = DRLearner(
         model_propensity=lgbm.LGBMClassifier(verbosity=-1),
@@ -173,13 +174,15 @@ def plot_cate_estimates():
         model_final=lgbm.LGBMRegressor(verbosity=-1, num_leaves=2),
     )
     est.fit(
-        df[test_indicator==0][outcome], df[test_indicator==0][treatment], X=X[test_indicator==0]
+        df[test_indicator == 0][outcome],
+        df[test_indicator == 0][treatment],
+        X=X[test_indicator == 0],
     )
-    cate_estimates_econml = est.effect(X[test_indicator==1])
+    cate_estimates_econml = est.effect(X[test_indicator == 1])
     fig, ax = plt.subplots()
     ax.set_xlabel("estimate")
     ax.set_ylabel("actual")
-    ax.scatter(cate_estimates_econml, df[test_indicator==1]["treatment_effect"])
+    ax.scatter(cate_estimates_econml, df[test_indicator == 1]["treatment_effect"])
 
     fig.savefig(_plot_root() / "cate_estimates.png")
 
