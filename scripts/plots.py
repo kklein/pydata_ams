@@ -65,9 +65,9 @@ def plot_prediction_failure_dags() -> None:
         format="png",
         directory=_plot_root(),
     )
-    dot_success.node("gas_stove", "Gas stove")
-    dot_success.node("payment", "payment")
-    dot_success.edge("gas_stove", "payment")
+    dot_success.node("stirring", "Stirring")
+    dot_success.node("payment", "Payment")
+    dot_success.edge("stirring", "payment")
     dot_success.render()
 
     dot_failure = graphviz.Digraph(
@@ -75,27 +75,27 @@ def plot_prediction_failure_dags() -> None:
         format="png",
         directory=_plot_root(),
     )
-    dot_failure.node("gas_stove", "Gas stove")
-    dot_failure.node("payment", "payment")
+    dot_failure.node("stirring", "Stirring")
+    dot_failure.node("payment", "Payment")
     dot_failure.node("chef_rating", "Chef rating")
     dot_failure.edge("chef_rating", "payment")
-    dot_failure.edge("chef_rating", "gas_stove")
+    dot_failure.edge("chef_rating", "stirring")
     dot_failure.render()
 
 
 @cache
 def _prediction_failure():
     df = _df_risotto()
-    gas_stoves = df["gas_stove"].unique()
+    gas_stoves = df["stirring"].unique()
     gas_stoves.sort()
     data = [
-        df[df["gas_stove"] == gas_stove]["payment"].values for gas_stove in gas_stoves
+        df[df["stirring"] == gas_stove]["payment"].values for gas_stove in gas_stoves
     ]
 
     fig, ax = plt.subplots()
     ax.violinplot(dataset=data)
     _set_axis_style(ax, gas_stoves)
-    ax.set_xlabel("gas stove")
+    ax.set_xlabel("stirring")
     ax.set_ylabel("payment")
     return fig, ax
 
@@ -115,7 +115,7 @@ def plot_why_prediction_fails() -> None:
     fig.savefig(_plot_root() / "why_prediction_fails_2.png")
 
     fig, ax = deepcopy(_prediction_failure())
-    x1, y1 = 2, 11
+    x1, y1 = 2, 7
     ax.plot([x0, x1], [y0, y1], "o")
     ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.2)
     fig.savefig(_plot_root() / "why_prediction_fails_3.png")
