@@ -124,7 +124,7 @@ def plot_why_prediction_fails() -> None:
 def _treatment_effect_hist():
     df = _df_risotto()
     fig, ax = plt.subplots()
-    n, _, patches = ax.hist(df["treatment_effect"])
+    n, _, patches = ax.hist(df["treatment_effect"], bins=20)
     ax.set_xlabel("treatment effect")
     return fig, ax, n, patches
 
@@ -180,8 +180,8 @@ def plot_cate_estimates():
     )
     cate_estimates_econml = est.effect(X[test_indicator == 1])
     fig, ax = plt.subplots()
-    ax.set_xlabel("estimate")
-    ax.set_ylabel("actual")
+    ax.set_xlabel("CATE estimate")
+    ax.set_ylabel("CATE")
     ax.scatter(cate_estimates_econml, df[test_indicator == 1]["treatment_effect"])
 
     fig.savefig(_plot_root() / "cate_estimates.png")
