@@ -7,19 +7,37 @@ url: https://marp.app/
 image: https://marp.app/og-image.jpg
 ---
 
-# Agenda
-
-- 0-5’: Why Causal Inference and why CATE estimation?
-- 5-10’: What are some conceptual ways of estimating CATEs?
-- 10-20’: How can we use EconML and CausalML for CATE estimation on a real dataset?
-- 20-30’: What are we missing from EconML and CausalML?
+# Causal Inference Libraries: What They Do and What I'd Like Them to Do
 
 ---
 
-# When prediction fails (?)
+# Agenda
+
+1. Why Causal Inference and why heterogeneity?
+2. How can we estimate heterogeneous treatment effects on paper?
+3. How can we estimate heterogeneous treatment effects in practice?
+4. What are we missing from EconML and CausalML?
+
+---
+
+# Risotto
+
+- Can either be prepared
+  - in a laborous and delicate fashion, involving a lot of **stirring**
+  - in a cut-throat, cantine style fashion, **not** involving a lot of
+    **stirring**
+- Consumers of risotto are **free to decide how much they pay** for
+  their risotto.
+- Naturally we wonder: should we be stirring?
+
+---
+
+# When prediction fails
+
+What happens when we intervene on a data point from the left,
+i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure that a gas stove is used, i.e. `stirring = 1`?
 
 ![bg right 100%](../plots/why_prediction_fails_1.png)
-stress interventional aspect
 
 ---
 
@@ -31,13 +49,7 @@ stress interventional aspect
 ![bg 100%](../plots/why_prediction_fails_2.png)
 ![bg 100%](../plots/why_prediction_fails_3.png)
 
----
-
-- Interventions!
-- Jonas Peters example:
-  https://www.youtube.com/watch?v=zvrcyqcN9Wo&list=PLzERW_Obpmv-_EXTV1zTmlv-Ab5Tfbp8X
-- https://matheusfacure.github.io/python-causality-handbook/01-Introduction-To-Causality.html
-- Quote from prediction machines
+<!-- TODO: plot the treatment effect -->
 
 ---
 
@@ -49,44 +61,124 @@ stress interventional aspect
 
 ---
 
-Simple math: cost of stirring 1USD per unit
+## To stir or not to stir, the math
 
-- Revenue of never stirring: X
-- Revenue of always stirring: X - Y
-- Revenue of stirring for those where it pays off: X + Z
+- Assume that the cost of stirring amounts to 1$ per unit.
+- Also assume that the revenue when never stirring is $R$.
+- Then, the revenue when **always stirring** is $R - n \cdot 1 +
+  \delta_1$
+  - The plot from the previous slide tells us that $n \cdot 1 > \delta$.
+- Revenue of **stirring when we expect it to pay off**: $R - k \cdot 1 +
+  \delta_{\pi}$
+  - We can condition on certain 'covariates'/features to decide for whom it
+    pays off.
+  - When doing this 'right', we get that $\delta_{\pi} > k \cdot 1$.
 
 ---
 
 ![bg 70%](../plots/treatment_effects_2.png)
 
----
-
-# Estimating heterogeneity
+<!-- TODO: Show delta_pi on plot. -->
 
 ---
+
+# Estimating heterogeneity on paper
+
+---
+
+## The fundamental problem of Causal Inference
+
+Desire
+
+| Consumer | Age of consumer | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
+| -------- | --------------- | --------------------------- | ----------------------- | --------------------------- |
+| Bob      | 28              | 21                          | 21.8                    | .8                          |
+| Anne     | 10              | 12                          | 12                      | 0                           |
+
+---
+
+## The fundamental problem of Causal Inference
+
+Reality
+
+| Consumer | Age of consumer | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
+| -------- | --------------- | --------------------------- | ----------------------- | --------------------------- |
+| Bob      | 28              | 21                          | ?                       | ?                           |
+| Anne     | 10              | ?                           | 12                      | ?                           |
+
+---
+
+## Conventional assumptions for estimating heterogeneous treatment effects
+
+- Positivity/overlap
+- Conditional ignorability/unconfoundedness
+- Consistency
+
+A randomized control trial usually gives us the first two for free.
+
+---
+
+## What now?
+
+- We still can't estimate the ITE.
+- Yet, we can define an estimand, the Conditional Average Treatment Effect
+  (CATE), which we can actually estimate:
+  $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
+  \mathbb{E}[\text{payment}|X\text{, no stirring}]$
+
+---
+
+## The DR-Learner
+
+---
+
+# Estimating heterogeneity in practice
+
+---
+
+![bg left 70%](../plots/dgp.gv.png)
 
 ```
-	age	nationality	chef_rating	gas_stove	mu	stirring	treatment_effect	payment
-0	50.77	Indonesia	0.53	1	20.737829	1	0.344297	21.082125
-1	59.48	Iraq	    0.46	0	20.462730	0	0.760332	20.462730
-2 	47.25	India	    0.46	0	24.294204	0	0.194722	24.294204
-3  	22.21	Italy	    0.58	0	15.903796	1	0.887621	16.791417
-4  	100.40	India	    0.58	1	29.951843	1	0.307483    30.259326
+unit	age	nationality	chef_rating
+0	50.77	Indonesia	0.53
+1	59.48	Iraq	        0.46
+2 	47.25	India	        0.46
+3  	22.21	Italy	        0.58
+4  	100.40	India	        0.58
+
+
+gas_stove	mu	stirring treatment_effect	payment
+1	    20.737829	1	    0.344297	21.082125
+0	    20.462730	0	    0.760332	20.462730
+0	    24.294204	0	    0.194722	24.294204
+0	    15.903796	1	    0.887621	16.791417
+1	    29.951843	1	    0.307483    30.259326
 ```
 
 ---
 
-```py
-X = pd.concat([df[numerical_covariates], pd.get_dummies(df["nationality"])], axis=1)
+```python
+X = pd.concat([
+	df[numerical_covariates],
+	pd.get_dummies(df["nationality"])
+], axis=1)
 
-model = BaseRRegressor(
-    outcome_learner=lgbm.LGBMRegressor(verbosity=-1, num_leaves=4),
-    effect_learner=lgbm.LGBMRegressor(verbosity=-1, num_leaves=4),
-    propensity_learner=lgbm.LGBMClassifier(verbosity=-1, num_leaves=4),
+reg = lgbm.LGBMRegressor(verbosity=-1, num_leaves=4)
+clf = lgbm.LGBMClassifier(verbosity=-1, num_leaves=4)
+model = causalml.BaseRRegressor(
+    outcome_learner=reg,
+    effect_learner=reg,
+    propensity_learner=clf,
 )
 
 model.fit(X=X, treatment=df[treatment], y=df[outcome])
-model.predict(X)
+cate_estimates = model.predict(X)
 ```
 
 ---
+
+![bg 70%](../plots/cate_estimates.png)
+
+---
+
+TODO: Investigate how much the fit is better when using categorical hack
