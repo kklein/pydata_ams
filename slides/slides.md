@@ -74,6 +74,8 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
     pays off.
   - When doing this 'right', we get that $\delta_{\pi} > k \cdot 1$.
 
+<!-- TODO: Use colors. -->
+
 ---
 
 ![bg 70%](../plots/treatment_effects_2.png)
@@ -136,6 +138,8 @@ A randomized control trial usually gives us the first two for free.
 
 ---
 
+## A simulation
+
 ![bg left 70%](../plots/dgp.gv.png)
 
 ```
@@ -154,6 +158,9 @@ gas_stove	mu	stirring treatment_effect	payment
 0	    15.903796	1	    0.887621	16.791417
 1	    29.951843	1	    0.307483    30.259326
 ```
+
+<!-- TODO: Stress which columns wouldn't usually be available in a -->
+<!-- non-simulated context -->
 
 ---
 
