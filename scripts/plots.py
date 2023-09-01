@@ -118,6 +118,15 @@ def plot_why_prediction_fails() -> None:
     x1, y1 = 2, 7
     ax.plot([x0, x1], [y0, y1], "o")
     ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.2)
+    epsilon = 0.2
+    ax.plot([x1 + epsilon, x1 + epsilon], [y0, y1], "--")
+    mid = (y0 + y1) / 2
+    ax.annotate(
+        "treatment effect",
+        xy=(x1 + epsilon, mid),
+        xytext=(x1 + 2 * epsilon, mid),
+        arrowprops={"facecolor": "black", "shrink": 0.05},
+    )
     fig.savefig(_plot_root() / "why_prediction_fails_3.png")
 
 

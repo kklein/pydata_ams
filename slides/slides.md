@@ -49,8 +49,6 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 ![bg 100%](../plots/why_prediction_fails_2.png)
 ![bg 100%](../plots/why_prediction_fails_3.png)
 
-<!-- TODO: plot the treatment effect -->
-
 ---
 
 # Why heterogeneity
