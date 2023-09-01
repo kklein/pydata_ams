@@ -157,8 +157,8 @@ def plot_treatment_effects(threshold: int) -> None:
     ax.axvline(1, color="orange")
     ax.legend(
         handles=[
-            Patch(facecolor="green", edgecolor="green", label="profit"),
-            Patch(facecolor="red", edgecolor="red", label="loss"),
+            Patch(facecolor="green", edgecolor="green", label="profitable"),
+            Patch(facecolor="red", edgecolor="red", label="loss-making"),
             Patch(facecolor="grey", edgecolor="grey", label="on the edge"),
         ]
     )
