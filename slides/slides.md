@@ -152,7 +152,10 @@ A randomized control trial usually gives us the first two for free.
 |  22.21 | Italy       |        0.58 |         0 | 15.90 |   1 |   0.88 | 16.79 |
 | 100.40 | India       |        0.58 |         1 | 29.95 |   1 |   0.30 | 30.25 |
 
-where $Y = \mu + T \cdot \tau$
+$Y \equiv$ the outcome, the final payment;
+$T \equiv$ the treatment, whether the risotto has been stirred or not
+$\tau \equiv$ the treatment effect
+$Y = \mu + T \cdot \tau$
 
 <!-- TODO: Stress which columns wouldn't usually be available in a -->
 <!-- non-simulated context -->
