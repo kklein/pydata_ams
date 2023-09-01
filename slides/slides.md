@@ -138,26 +138,23 @@ A randomized control trial usually gives us the first two for free.
 
 ---
 
-## A simulation
+## Risotto consumption: a simulation
 
 ![bg left 70%](../plots/dgp.gv.png)
 
-```
-unit	age	nationality	chef_rating
-0	50.77	Indonesia	0.53
-1	59.48	Iraq	        0.46
-2 	47.25	India	        0.46
-3  	22.21	Italy	        0.58
-4  	100.40	India	        0.58
+---
 
+## Risotto consumption: a simulation
 
-gas_stove	mu	stirring treatment_effect	payment
-1	    20.737829	1	    0.344297	21.082125
-0	    20.462730	0	    0.760332	20.462730
-0	    24.294204	0	    0.194722	24.294204
-0	    15.903796	1	    0.887621	16.791417
-1	    29.951843	1	    0.307483    30.259326
-```
+|   age | nationality | chef_rating | gas_stove |   $\mu$ | $T$ |   $\tau$ |     $Y$ |
+| ----: | :---------- | ----------: | --------: | ------: | --: | -------: | ------: |
+| 50.77 | Indonesia   |        0.53 |         1 | 20.7378 |   1 | 0.344297 | 21.0821 |
+| 59.48 | Iraq        |        0.46 |         0 | 20.4627 |   0 | 0.760332 | 20.4627 |
+| 47.25 | India       |        0.46 |         0 | 24.2942 |   0 | 0.194722 | 24.2942 |
+| 22.21 | Italy       |        0.58 |         0 | 15.9038 |   1 | 0.887621 | 16.7914 |
+| 100.4 | India       |        0.58 |         1 | 29.9518 |   1 | 0.307483 | 30.2593 |
+
+where $Y = \mu + T \cdot \tau$
 
 <!-- TODO: Stress which columns wouldn't usually be available in a -->
 <!-- non-simulated context -->
