@@ -24,7 +24,9 @@ def _plot_root() -> Path:
 
 @cache
 def _df_risotto() -> pd.DataFrame:
-    return pd.read_csv(_root() / "data" / "risotto.csv")
+    df = pd.read_csv(_root() / "data" / "risotto.csv")
+    df["nationality"] = df["nationality"].astype("category")
+    return df
 
 
 # Taken from
@@ -196,8 +198,30 @@ def plot_cate_estimates():
     fig.savefig(_plot_root() / "cate_estimates.png")
 
 
+def plot_categorical_tree():
+    """Plot an arbitrary lgbm tree with a categorical feature."""
+    df = _df_risotto()
+    model = lgbm.LGBMRegressor(verbosity=-1, max_depth=3)
+    model.fit(df[["nationality"]], df["payment"])
+    fig, ax = plt.subplots(figsize=(15, 10))
+    lgbm.plot_tree(model, ax=ax)
+    fig.savefig(_plot_root() / "categorical_tree.png")
+
+
+def plot_numerical_tree():
+    """Plot an arbitrary lgbm tree with a numerical feature."""
+    df = _df_risotto()
+    model = lgbm.LGBMRegressor(verbosity=-1, max_depth=3)
+    model.fit(df[["age"]], df["payment"])
+    fig, ax = plt.subplots(figsize=(15, 10))
+    lgbm.plot_tree(model, ax=ax)
+    fig.savefig(_plot_root() / "numerical_tree.png")
+
+
 plot_dgp_dag()
 plot_why_prediction_fails()
 plot_prediction_failure_dags()
 plot_treatment_effects(threshold=1)
 plot_cate_estimates()
+plot_categorical_tree()
+plot_numerical_tree()

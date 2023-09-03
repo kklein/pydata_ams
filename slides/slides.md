@@ -186,4 +186,75 @@ cate_estimates = model.predict(X)
 
 ---
 
-TODO: Investigate how much the fit is better when using categorical hack
+# Problems in practice
+
+---
+
+## 1. Categorical features
+
+- `lightgbm` is a very popular choice for prediction on tabular
+  datasets.
+- One of is nice features is that it works natively with categorical
+  features.
+  E.g. instead of having to one-hot encode categoricals, one can
+  'tell' `lightgbm` that a single columns is to be treated as a
+  categorical.
+
+---
+
+![bg left 150%](../plots/numerical_tree.png)
+![bg right 150%](../plots/categorical_tree.png)
+
+---
+
+- Option 1: Use `pandas` `category` dtype
+
+  ```python
+  df["nationality"] = df["nationality"].astype("category")
+  model = lgbm.LGBMRegressor()
+  model.fit(df[["nationality"]], df["payment"])
+  ```
+
+- Option 2: Explicitly set `categorical_indices`
+  ```python
+  df["nationality"] = df["nationality"].astype("category").cat.codes
+  model = lgbm.LGBMRegressor(categorical_feature=[0])
+  model.fit(df[["nationality"]], df["payment"])
+  ```
+
+---
+
+- Unfortunately, both options don't work with `causalml` and `econml`.
+- Option 1 is not possible since both convert `pandas` input to `numpy`
+  objects in a 'validation' step.
+- Option 2 is not possible since constructor parameters can't be
+  passed.
+- A hack is - of course - possible to indirectly use option 2:
+  ```python
+  from functools import partialmethod
+  from lightgbm import LGBMRegressor
+  LGBMRegressor.fit = partialmethod(
+    LGBMRegressor.fit,
+    categorical_feature=[0],
+  )
+  ```
+
+---
+
+## Tying back to our example: what's the difference?
+
+---
+
+## 2. Reusing component models
+
+- ***
+
+## 3. Transparent cross-fitting
+
+---
+
+## 4. Biased final stage
+
+---
+
+## 5. Stage-specific covariate sets
