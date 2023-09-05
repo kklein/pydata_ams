@@ -112,7 +112,7 @@ Reality
 
 - Positivity/overlap
 - Conditional ignorability/unconfoundedness
-- Consistency
+- SUTVA
 
 A randomized control trial usually gives us the first two for free.
 
@@ -154,8 +154,8 @@ A randomized control trial usually gives us the first two for free.
 
 $Y \equiv$ the outcome, the final payment;
 $T \equiv$ the treatment, whether the risotto has been stirred or not
-$\tau \equiv$ the treatment effect
-$Y = \mu + T \cdot \tau$
+$\tau(X) \equiv$ the treatment effect
+$Y = \mu(X) + T \cdot \tau(X)$
 
 <!-- TODO: Stress which columns wouldn't usually be available in a -->
 <!-- non-simulated context -->
@@ -247,7 +247,7 @@ cate_estimates = model.predict(X)
 
 ## 2. Reusing component models
 
-- ***
+---
 
 ## 3. Transparent cross-fitting
 
