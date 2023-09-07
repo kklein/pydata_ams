@@ -12,7 +12,8 @@ footer: Kevin Klein, @kevkle
 
 ## Kevin Klein, QuantCo
 
-![bg](../imgs/monet_ci.png)
+![bg](../imgs/monet_library1.png)
+![](white)
 
 ---
 
@@ -29,8 +30,9 @@ footer: Kevin Klein, @kevkle
 
 ![bg right 100%](../imgs/monet_risotto.png)
 
-- Can either be prepared
-  - in a laborous and delicate fashion, involving a lot of **stirring**
+- Risotto can either be prepared
+  - in a laborous and delicate fashion, involving a lot of
+    **stirring** or
   - in a cut-throat, cantine style fashion, **not** involving a lot of
     **stirring**
 - Consumers of risotto are **free to decide how much they pay** for
@@ -129,7 +131,7 @@ Reality
 
 - Positivity/overlap
 - Conditional ignorability/unconfoundedness
-- SUTVA
+- Stable Unit Treatment Value (SUTVA)
 
 A randomized control trial usually gives us the first two for free.
 
@@ -232,8 +234,8 @@ cate_estimates = model.predict(X)
 
 ---
 
-![bg left 150%](../imgs/numerical_tree.png)
-![bg right 150%](../imgs/categorical_tree.png)
+![bg 120%](../imgs/numerical_tree.png)
+![bg 120%](../imgs/categorical_tree.png)
 
 ---
 
