@@ -1,17 +1,23 @@
 from copy import deepcopy
-from functools import cache
+from functools import cache, partialmethod
 from pathlib import Path
 
+import data_generation
 import graphviz
 import lightgbm as lgbm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
+from causalml.inference.meta import BaseRRegressor
 from econml.dr import DRLearner
 from git_root import git_root
 from matplotlib.patches import Patch
+from sklearn.metrics import mean_squared_error
 
 RNG = np.random.default_rng(seed=1337)
+_TEST_FRACTION = 0.2
+_NUMERICAL_COVARIATES = ["age", "chef_rating", "gas_stove"]
 
 
 def _root() -> Path:
@@ -218,6 +224,89 @@ def plot_numerical_tree():
     fig.savefig(_plot_root() / "numerical_tree.png")
 
 
+def _reg_rmse(
+    df, test_indicator, treatment: str = "stirring", outcome: str = "payment"
+) -> float:
+    X = pd.concat(
+        [df[_NUMERICAL_COVARIATES], pd.get_dummies(df["nationality"])], axis=1
+    )
+    X_train, X_test = X.iloc[test_indicator == 0], X.iloc[test_indicator == 1]
+    df_train, df_test = df.iloc[test_indicator == 0], df.iloc[test_indicator == 1]
+    model_cml = BaseRRegressor(
+        outcome_learner=lgbm.LGBMRegressor(verbosity=-1),
+        effect_learner=lgbm.LGBMRegressor(verbosity=-1),
+        propensity_learner=lgbm.LGBMClassifier(verbosity=-1),
+    )
+    model_cml.fit(X=X_train, treatment=df_train[treatment], y=df_train[outcome])
+    cate_estimates_cml = model_cml.predict(X_test)
+    return mean_squared_error(
+        cate_estimates_cml, df_test["treatment_effect"], squared=False
+    )
+
+
+def _cat_rmse(
+    df, test_indicator, treatment: str = "stirring", outcome: str = "payment"
+) -> float:
+    df["nationality"] = df["nationality"].astype("category").cat.codes
+    df_train, df_test = df.iloc[test_indicator == 0], df.iloc[test_indicator == 1]
+    X_train = df_train[_NUMERICAL_COVARIATES + ["nationality"]]
+    X_test = df_test[_NUMERICAL_COVARIATES + ["nationality"]]
+    HackR = deepcopy(lgbm.LGBMRegressor)
+    HackR.fit = partialmethod(
+        HackR.fit,
+        categorical_feature=[3],
+    )
+    HackC = deepcopy(lgbm.LGBMClassifier)
+    HackC.fit = partialmethod(
+        HackC.fit,
+        categorical_feature=[3],
+    )
+    model_cml = BaseRRegressor(
+        outcome_learner=HackR(verbosity=-1),
+        effect_learner=HackR(verbosity=-1),
+        propensity_learner=HackC(verbosity=-1),
+    )
+
+    model_cml.fit(X=X_train, treatment=df_train[treatment], y=df_train[outcome])
+    cate_estimates_cml = model_cml.predict(X_test)
+    return mean_squared_error(
+        cate_estimates_cml, df_test["treatment_effect"], squared=False
+    )
+
+
+def plot_categorical_vs_one_hot():
+    """Plot a comparison of R-Learner with categoricals and without."""
+    rows = []
+    for n in [5_000, 10_000, 15_000]:
+        for seed in range(10):
+            rng = np.random.default_rng(seed=seed)
+            df = data_generation.gen_covariates(n, rng)
+            treatment = data_generation.treatment_assignments(df, rng=rng)
+            df_final = data_generation.gen_outcomes(df, treatment, rng=rng)
+            test_indicator = rng.binomial(n=1, p=_TEST_FRACTION, size=n)
+            rows.append(
+                {
+                    "type": "one-hot encoding",
+                    "n": n,
+                    "loss": _reg_rmse(df_final, test_indicator),
+                }
+            )
+            rows.append(
+                {
+                    "type": "categorical",
+                    "n": n,
+                    "loss": _cat_rmse(df_final, test_indicator),
+                }
+            )
+
+    df_stats = pd.DataFrame(rows)
+    fig, ax = plt.subplots()
+    sns.violinplot(df_stats, hue="type", x="n", y="loss")
+    ax.set_ylabel("RMSE")
+    ax.set_xlabel("sample size (n)")
+    fig.savefig(_plot_root() / "one-hot-vs-categorical.png")
+
+
 plot_dgp_dag()
 plot_why_prediction_fails()
 plot_prediction_failure_dags()
@@ -225,3 +314,4 @@ plot_treatment_effects(threshold=1)
 plot_cate_estimates()
 plot_categorical_tree()
 plot_numerical_tree()
+plot_categorical_vs_one_hot()
