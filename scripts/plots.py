@@ -282,9 +282,16 @@ def plot_categorical_vs_one_hot(
     for n in sample_sizes:
         for seed in range(n_seeds):
             rng = np.random.default_rng(seed=seed)
-            df = data_generation.gen_covariates(n, rng)
+            df = data_generation.gen_covariates(
+                n, rng, nations=np.array([f"c{i}" for i in range(500)])
+            )
             treatment = data_generation.treatment_assignments(df, rng=rng)
-            df_final = data_generation.gen_outcomes(df, treatment, rng=rng)
+            df_final = data_generation.gen_outcomes(
+                df,
+                treatment,
+                rng=rng,
+                mapping={f"c{i}": rng.normal(loc=0.5, scale=2) for i in range(500)},
+            )
             test_indicator = rng.binomial(n=1, p=_TEST_FRACTION, size=n)
             rows.append(
                 {

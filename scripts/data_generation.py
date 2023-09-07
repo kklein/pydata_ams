@@ -14,13 +14,13 @@ MIN_PRICE = 2.8
 MAX_PRICE = 32.2
 
 
-def gen_covariates(n: int, rng) -> pd.DataFrame:
+def gen_covariates(n: int, rng, nations: np.ndarray = NATIONS) -> pd.DataFrame:
     """Generate covariates."""
     # TODO: Consider using scipy's truncnormal distribution instead.
     ages = rng.normal(loc=50, scale=20, size=n)
     ages = np.where(ages < 0, 0, ages)
 
-    nationalities = rng.choice(NATIONS, size=n)
+    nationalities = rng.choice(nations, size=n)
 
     chef_ratings_raw = rng.normal(loc=6.8, scale=2, size=n)
     # We'd like to apply a logarithm afterwards.
@@ -63,7 +63,9 @@ def treatment_assignments(
     if is_rct:
         return rng.binomial(n=1, p=0.5, size=n)
 
-    score = _f_p_chef_rating(df["chef_rating"]) + rng.normal(loc=0, scale=0.5, size=n)
+    score = _f_p_chef_rating(df_covariates["chef_rating"]) + rng.normal(
+        loc=0, scale=0.5, size=n
+    )
     # We want to ensure positivity and therefore cap the probabilities on both ends.
     normalized_scores = (
         MinMaxScaler(feature_range=(MIN_P, MAX_P))
@@ -104,14 +106,14 @@ def _mu(df_covariates, rng) -> np.ndarray:
     )
 
 
-def _f_tau_nationality(nationality):
-    mapping = {
+def _f_tau_nationality(nationality, rng, mapping=None):
+    mapping = mapping or {
         "India": 0.8,
         "Italy": 2,
-        "Iceland": 0.4,
-        "Iraq": 1.1,
-        "Israel": 0.4,
-        "Indonesia": 0.7,
+        "Iceland": 0.3,
+        "Iraq": 1.2,
+        "Israel": 1.2,
+        "Indonesia": 0.8,
         "Iran": 1.2,
         "Ireland": 0.3,
     }
@@ -119,19 +121,28 @@ def _f_tau_nationality(nationality):
     return result.astype("float")
 
 
-def _tau(df_covariates: pd.DataFrame, rng) -> np.ndarray:
+def _tau(
+    df_covariates: pd.DataFrame,
+    rng,
+    mapping=None,
+) -> np.ndarray:
     n = len(df_covariates)
-    tau_nationality = _f_tau_nationality(df["nationality"])
+    tau_nationality = _f_tau_nationality(
+        df_covariates["nationality"], rng, mapping=mapping
+    )
     noise = rng.normal(0, 0.1, size=n)
     return 3 * tau_nationality + noise
 
 
 def gen_outcomes(
-    df_covariates: pd.DataFrame, treatment: np.ndarray, rng
+    df_covariates: pd.DataFrame,
+    treatment: np.ndarray,
+    rng,
+    mapping=None,
 ) -> pd.DataFrame:
     """Generate outcomes."""
     mu = _mu(df_covariates, rng)
-    tau = _tau(df_covariates, rng)
+    tau = _tau(df_covariates, rng=rng, mapping=mapping)
 
     outcome = mu + treatment * tau
 
