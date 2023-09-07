@@ -243,9 +243,20 @@ cate_estimates = model.predict(X)
 
 ## Tying back to our example: what's the difference?
 
+![](../plots/one-hot-vs-categorical.png)
+
 ---
 
 ## 2. Reusing component models
+
+Deciding between meta learners is a hard challenge [insert reference]
+
+- In practice, this often boils down to 'trying out' different ones.
+- Many of the meta learners require a component model estimating $\mathbb{E}[Y|X,T=0]$.
+- Being able to reuse said model would often easily lead to a halving
+  of training cost.
+
+[Insert illustration]
 
 ---
 
