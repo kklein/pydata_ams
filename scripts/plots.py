@@ -47,8 +47,9 @@ def plot_dgp_dag() -> None:
     dot = graphviz.Digraph(
         "dgp",
         comment="Data Generating Process",
-        format="png",
+        format="svg",
         directory=_plot_root(),
+
     )
     # TODO: To make a node/edge invisible use `style="invis"`.
     dot.node("age", "Age")
@@ -69,7 +70,7 @@ def plot_prediction_failure_dags() -> None:
     """Plot dags indicating why prediction might fail."""
     dot_success = graphviz.Digraph(
         "prediction_success",
-        format="png",
+        format="svg",
         directory=_plot_root(),
     )
     dot_success.node("stirring", "Stirring")
@@ -79,7 +80,7 @@ def plot_prediction_failure_dags() -> None:
 
     dot_failure = graphviz.Digraph(
         "prediction_failure",
-        format="png",
+        format="svg",
         directory=_plot_root(),
     )
     dot_failure.node("stirring", "Stirring")

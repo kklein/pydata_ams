@@ -50,8 +50,8 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-![bg 50%](../imgs/prediction_success.gv.png)
-![bg 50%](../imgs/prediction_failure.gv.png)
+![bg 50%](../imgs/prediction_success.gv.svg)
+![bg 50%](../imgs/prediction_failure.gv.svg)
 
 ---
 
@@ -132,8 +132,7 @@ Reality
 - Positivity/overlap
 - Conditional ignorability/unconfoundedness
 - Stable Unit Treatment Value (SUTVA)
-
-A randomized control trial usually gives us the first two for free.
+  A randomized control trial usually gives us the first two for free.
 
 ---
 
@@ -166,7 +165,7 @@ A randomized control trial usually gives us the first two for free.
 
 ## Risotto consumption: a simulation
 
-![bg left 70%](../imgs/dgp.gv.png)
+![bg left 70%](../imgs/dgp.gv.svg)
 
 ---
 
