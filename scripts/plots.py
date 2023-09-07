@@ -49,7 +49,6 @@ def plot_dgp_dag() -> None:
         comment="Data Generating Process",
         format="svg",
         directory=_plot_root(),
-
     )
     # TODO: To make a node/edge invisible use `style="invis"`.
     dot.node("age", "Age")
@@ -315,7 +314,7 @@ def plot_categorical_vs_one_hot(
     ax.set_ylabel("RMSE")
     ax.set_xlabel("sample size (n)")
     fig.tight_layout()
-    fig.savefig(_plot_root() / "one-hot-vs-categorical.png")
+    fig.savefig(_plot_root() / "one-hot-vs-categorical.png", transparent=True)
 
 
 if __name__ == "__main__":
