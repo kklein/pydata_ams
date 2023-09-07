@@ -273,3 +273,24 @@ Deciding between meta learners is a hard challenge [insert reference]
 ---
 
 ## 5. Stage-specific covariate sets
+
+---
+
+# Do you also prefer Causal Inference and critizing libraries over doing pretty slides?
+
+Join us :)
+https://www.quantco.com/
+
+![bg left 70%](../plots/quantco_black.png)
+
+---
+
+![bg 90%](../plots/jobs_eng.png)
+![bg 90%](../plots/jobs_ds.png)
+
+---
+
+# Acknowledgements
+
+- Matheus Facure
+- Matthias Lux, Norbert Stroop
