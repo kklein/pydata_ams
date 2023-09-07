@@ -37,17 +37,17 @@ image: https://marp.app/og-image.jpg
 What happens when we intervene on a data point from the left,
 i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure that a gas stove is used, i.e. `stirring = 1`?
 
-![bg right 100%](../plots/why_prediction_fails_1.png)
+![bg right 100%](../imgs/why_prediction_fails_1.png)
 
 ---
 
-![bg 50%](../plots/prediction_success.gv.png)
-![bg 50%](../plots/prediction_failure.gv.png)
+![bg 50%](../imgs/prediction_success.gv.png)
+![bg 50%](../imgs/prediction_failure.gv.png)
 
 ---
 
-![bg 100%](../plots/why_prediction_fails_3.png)
-![bg 100%](../plots/why_prediction_fails_2.png)
+![bg 100%](../imgs/why_prediction_fails_3.png)
+![bg 100%](../imgs/why_prediction_fails_2.png)
 
 ---
 
@@ -55,7 +55,7 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-![bg 70%](../plots/treatment_effects_1.png)
+![bg 70%](../imgs/treatment_effects_1.png)
 
 ---
 
@@ -76,7 +76,7 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-![bg 70%](../plots/treatment_effects_2.png)
+![bg 70%](../imgs/treatment_effects_2.png)
 
 <!-- TODO: Show delta_pi on plot. -->
 
@@ -130,15 +130,34 @@ A randomized control trial usually gives us the first two for free.
 
 ## The DR-Learner
 
+- Is one of many 'Meta-Learners'
+  - Use ML prediction models as components, plumbing them to a causal
+    model
+- TODO: Explain
+
 ---
 
 # Estimating heterogeneity in practice
 
 ---
 
+|              | EconML     | CausalML   |
+| ------------ | ---------- | ---------- |
+| Developed by | MSR/py-why | Uber       |
+| License      | MIT        | Apache 2.0 |
+|              |            |            |
+|              |            |            |
+|              |            |            |
+|              |            |            |
+|              |            |            |
+
+TODO: Talk about features
+
+---
+
 ## Risotto consumption: a simulation
 
-![bg left 70%](../plots/dgp.gv.png)
+![bg left 70%](../imgs/dgp.gv.png)
 
 ---
 
@@ -186,7 +205,7 @@ cate_estimates = model.predict(X)
 
 ---
 
-![bg 70%](../plots/cate_estimates.png)
+![bg 70%](../imgs/cate_estimates.png)
 
 ---
 
@@ -206,8 +225,8 @@ cate_estimates = model.predict(X)
 
 ---
 
-![bg left 150%](../plots/numerical_tree.png)
-![bg right 150%](../plots/categorical_tree.png)
+![bg left 150%](../imgs/numerical_tree.png)
+![bg right 150%](../imgs/categorical_tree.png)
 
 ---
 
@@ -247,7 +266,7 @@ cate_estimates = model.predict(X)
 
 ## Tying back to our example: what's the difference?
 
-![](../plots/one-hot-vs-categorical.png)
+![](../imgs/one-hot-vs-categorical.png)
 
 ---
 
@@ -281,16 +300,16 @@ Deciding between meta learners is a hard challenge [insert reference]
 Join us :)
 https://www.quantco.com/
 
-![bg left 70%](../plots/quantco_black.png)
+![bg left 70%](../imgs/quantco_black.png)
 
 ---
 
-![bg 90%](../plots/jobs_eng.png)
-![bg 90%](../plots/jobs_ds.png)
+![bg 90%](../imgs/jobs_eng.png)
+![bg 90%](../imgs/jobs_ds.png)
 
 ---
 
 # Acknowledgements
 
-- Matheus Facure
-- Matthias Lux, Norbert Stroop
+- Matheus Facure: [Causal Inference for the Brave and True](https://matheusfacure.github.io/python-causality-handbook/landing-page.html)
+- Matthias Lux, Norbert Stoop

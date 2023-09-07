@@ -19,7 +19,7 @@ def _root() -> Path:
 
 
 def _plot_root() -> Path:
-    return _root() / "plots"
+    return _root() / "imgs"
 
 
 @cache
