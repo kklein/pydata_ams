@@ -132,8 +132,8 @@ A randomized control trial usually gives us the first two for free.
 
 - Is one of many 'Meta-Learners'
   - Use ML prediction models as components, plumbing them to a causal
-    model
-- TODO: Explain
+  model
+  <!-- TODO: Explain -->
 
 ---
 
@@ -151,7 +151,7 @@ A randomized control trial usually gives us the first two for free.
 |              |            |            |
 |              |            |            |
 
-TODO: Talk about features
+<!-- TODO: Talk about features -->
 
 ---
 
