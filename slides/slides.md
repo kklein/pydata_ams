@@ -59,14 +59,14 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-## To stir or not to stir, the math
+## To stir or not to stir, the maths
 
 - Assume that the cost of stirring amounts to 1$ per unit.
-- Also assume that the revenue when never stirring is $R$.
-- Then, the revenue when **always stirring** is $R - n \cdot 1 +
+- Also assume that the overall revenue when never stirring is $R$.
+- Then, the overall revenue when **always stirring** is $R - n \cdot 1 +
   \delta_1$
   - The plot from the previous slide tells us that $n \cdot 1 > \delta$.
-- Revenue of **stirring when we expect it to pay off**: $R - k \cdot 1 +
+- The overrall revenue of **stirring when we expect it to pay off**: $R - k \cdot 1 +
   \delta_{\pi}$
   - We can condition on certain 'covariates'/features to decide for whom it
     pays off.
@@ -108,6 +108,16 @@ Reality
 
 ---
 
+## What now?
+
+- We can't estimate the Individual Treatment Effect (ITE).
+- Yet, we can define an estimand, the Conditional Average Treatment Effect
+  (CATE), which we can actually estimate:
+  $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
+  \mathbb{E}[\text{payment}|X\text{, no stirring}]$
+
+---
+
 ## Conventional assumptions for estimating heterogeneous treatment effects
 
 - Positivity/overlap
@@ -115,16 +125,6 @@ Reality
 - SUTVA
 
 A randomized control trial usually gives us the first two for free.
-
----
-
-## What now?
-
-- We still can't estimate the ITE.
-- Yet, we can define an estimand, the Conditional Average Treatment Effect
-  (CATE), which we can actually estimate:
-  $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
-  \mathbb{E}[\text{payment}|X\text{, no stirring}]$
 
 ---
 
@@ -152,9 +152,10 @@ A randomized control trial usually gives us the first two for free.
 |  22.21 | Italy       |        0.58 |         0 | 15.90 |   1 |   0.88 | 16.79 |
 | 100.40 | India       |        0.58 |         1 | 29.95 |   1 |   0.30 | 30.25 |
 
-$Y \equiv$ the outcome, the final payment;
+$\mu(X) \equiv$ the 'base outcome', i.e. outcome/payment without stirring
 $T \equiv$ the treatment, whether the risotto has been stirred or not
-$\tau(X) \equiv$ the treatment effect
+$\tau(X) \equiv$ the heterogeneous treatment effect
+$Y \equiv$ the outcome, the final payment
 $Y = \mu(X) + T \cdot \tau(X)$
 
 <!-- TODO: Stress which columns wouldn't usually be available in a -->
@@ -163,19 +164,22 @@ $Y = \mu(X) + T \cdot \tau(X)$
 ---
 
 ```python
+# One-hot encoding
 X = pd.concat([
-	df[numerical_covariates],
-	pd.get_dummies(df["nationality"])
+    df[numerical_covariates],
+    pd.get_dummies(df["nationality"])
 ], axis=1)
 
-reg = lgbm.LGBMRegressor(verbosity=-1, num_leaves=4)
-clf = lgbm.LGBMClassifier(verbosity=-1, num_leaves=4)
+# Model definition
+reg = lgbm.LGBMRegressor()
+clf = lgbm.LGBMClassifier()
 model = causalml.BaseRRegressor(
     outcome_learner=reg,
     effect_learner=reg,
     propensity_learner=clf,
 )
 
+# Model training and prediction
 model.fit(X=X, treatment=df[treatment], y=df[outcome])
 cate_estimates = model.predict(X)
 ```
