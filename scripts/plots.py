@@ -15,7 +15,6 @@ from git_root import git_root
 from matplotlib.patches import Patch
 from sklearn.metrics import mean_squared_error
 
-RNG = np.random.default_rng(seed=1337)
 _TEST_FRACTION = 0.2
 _NUMERICAL_COVARIATES = ["age", "chef_rating", "gas_stove"]
 
@@ -174,7 +173,7 @@ def plot_treatment_effects(threshold: int) -> None:
     fig.savefig(_plot_root() / "treatment_effects_2.png")
 
 
-def plot_cate_estimates():
+def plot_cate_estimates(rng):
     """Plot comparison of cate estimates to actuals."""
     outcome = "payment"
     treatment = "stirring"
@@ -183,7 +182,7 @@ def plot_cate_estimates():
 
     X = pd.concat([df[numerical_covariates], pd.get_dummies(df["nationality"])], axis=1)
 
-    test_indicator = RNG.binomial(n=1, p=0.2, size=len(X))
+    test_indicator = rng.binomial(n=1, p=0.2, size=len(X))
 
     est = DRLearner(
         model_propensity=lgbm.LGBMClassifier(verbosity=-1),
@@ -274,11 +273,14 @@ def _cat_rmse(
     )
 
 
-def plot_categorical_vs_one_hot():
+def plot_categorical_vs_one_hot(
+    sample_sizes: tuple[int, ...] = (5000, 10_000, 15_000),
+    n_seeds: int = 5,
+) -> None:
     """Plot a comparison of R-Learner with categoricals and without."""
     rows = []
-    for n in [5_000, 10_000, 15_000]:
-        for seed in range(10):
+    for n in sample_sizes:
+        for seed in range(n_seeds):
             rng = np.random.default_rng(seed=seed)
             df = data_generation.gen_covariates(n, rng)
             treatment = data_generation.treatment_assignments(df, rng=rng)
@@ -304,14 +306,17 @@ def plot_categorical_vs_one_hot():
     sns.violinplot(df_stats, hue="type", x="n", y="loss")
     ax.set_ylabel("RMSE")
     ax.set_xlabel("sample size (n)")
+    fig.tight_layout()
     fig.savefig(_plot_root() / "one-hot-vs-categorical.png")
 
 
-plot_dgp_dag()
-plot_why_prediction_fails()
-plot_prediction_failure_dags()
-plot_treatment_effects(threshold=1)
-plot_cate_estimates()
-plot_categorical_tree()
-plot_numerical_tree()
-plot_categorical_vs_one_hot()
+if __name__ == "__main__":
+    rng = np.random.default_rng(seed=1337)
+    plot_dgp_dag()
+    plot_why_prediction_fails()
+    plot_prediction_failure_dags()
+    plot_treatment_effects(threshold=1)
+    plot_cate_estimates(rng)
+    plot_categorical_tree()
+    plot_numerical_tree()
+    plot_categorical_vs_one_hot()
