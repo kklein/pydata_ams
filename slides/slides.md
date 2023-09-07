@@ -165,7 +165,7 @@ Reality
 
 ## Risotto consumption: a simulation
 
-![bg left 70%](../imgs/dgp.gv.svg)
+![bg left 80%](../imgs/dgp.gv.svg)
 
 ---
 
