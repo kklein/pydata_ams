@@ -5,9 +5,14 @@ author: Yuki Hattori
 keywords: marp,marp-cli,slide
 url: https://marp.app/
 image: https://marp.app/og-image.jpg
+footer: Kevin Klein, @kevkle
 ---
 
 # Causal Inference Libraries: What They Do and What I'd Like Them to Do
+
+## Kevin Klein, QuantCo
+
+![bg](../imgs/monet_ci.png)
 
 ---
 
@@ -21,6 +26,8 @@ image: https://marp.app/og-image.jpg
 ---
 
 # Risotto
+
+![bg right 100%](../imgs/monet_risotto.png)
 
 - Can either be prepared
   - in a laborous and delicate fashion, involving a lot of **stirring**
@@ -250,8 +257,13 @@ cate_estimates = model.predict(X)
 - Unfortunately, both options don't work with `causalml` and `econml`.
 - Option 1 is not possible since both convert `pandas` input to `numpy`
   objects in a 'validation' step.
+  - `X, treatment, y = convert_pd_to_np(X, treatment, y)`
+  - https://github.com/uber/causalml/blob/3b3daaa3cd2ef1960028908c152cfd242b37712c/causalml/inference/meta/rlearner.py#L100
 - Option 2 is not possible since constructor parameters can't be
   passed.
+
+---
+
 - A hack is - of course - possible to indirectly use option 2:
   ```python
   from functools import partialmethod
@@ -272,26 +284,37 @@ cate_estimates = model.predict(X)
 
 ## 2. Reusing component models
 
-Deciding between meta learners is a hard challenge [insert reference]
+- There are many free parameters when training meta learners:
 
-- In practice, this often boils down to 'trying out' different ones.
-- Many of the meta learners require a component model estimating $\mathbb{E}[Y|X,T=0]$.
-- Being able to reuse said model would often easily lead to a halving
-  of training cost.
+  1. Choose which meta learner (e.g. R-Learner)
+     - This is hard, see [Curth, van der Schar (2021)](https://proceedings.mlr.press/v130/curth21a.html)
+  2. Per estimand, choose an estimator (e.g. boosted trees)
+  3. Per estimator
 
-[Insert illustration]
+  - per hyperparameter (e.g. depth), choose a value (e.g.12)
 
----
+- In practice, this often boils down to 'trying out' different
+  constellations, e.g. via random search or grid search.
 
-## 3. Transparent cross-fitting
-
----
-
-## 4. Biased final stage
+- See [EconML](https://github.com/py-why/EconML/issues/646)
 
 ---
 
-## 5. Stage-specific covariate sets
+## 3. Specific covariate sets
+
+1. Example 1: We know that the treatment effect is only a simple
+   function of stirring.
+2. Example 2: Differnt variants use different features
+
+---
+
+## And more...
+
+- DoubleML: Biased final stage
+- Tricky to combine cross-fitting with further cross-splitting
+  (e.g. super learning or splits) -> also an engineering problem
+  (e.g. multiprocessing)
+- Read out treatment effects of categoricals when using DML
 
 ---
 
