@@ -119,7 +119,7 @@ Reality
 
 ## What now?
 
-- We can't estimate the Individual Treatment Effect (ITE).
+- We can't know the Individual Treatment Effect (ITE).
 - Yet, we can define an estimand, the Conditional Average Treatment Effect
   (CATE), which we can actually estimate:
   $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
@@ -132,16 +132,20 @@ Reality
 - Positivity/overlap
 - Conditional ignorability/unconfoundedness
 - Stable Unit Treatment Value (SUTVA)
-  A randomized control trial usually gives us the first two for free.
+
+A randomized control trial usually gives us the first two for free.
 
 ---
 
-## The DR-Learner
+## MetaLearners
 
-- Is one of many 'Meta-Learners'
-  - Use ML prediction models as components, plumbing them to a causal
-  model
-  <!-- TODO: Explain -->
+- MetaLearners are CATE models which rely on typical, arbitrary machine learning
+  estimators (classifiers or regressors) as components. Their output
+  is an estimate of the heterogeneous treatment effect.
+- An simple, intuitive, yet often somewhat disappointing MetaLearner
+  is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
+- Other examples are: S-Learner, F-Learner, X-Learner, R-Learner,
+  M-Learner, DR-Learner
 
 ---
 
@@ -217,11 +221,11 @@ cate_estimates = model.predict(X)
 
 ---
 
-# Problems in practice
+# Pains and problems in practice ($P^3$)
 
 ---
 
-## 1. Categorical features
+## $P^3$\#1: Categorical features
 
 - `lightgbm` is a very popular choice for prediction on tabular
   datasets.
@@ -283,7 +287,7 @@ cate_estimates = model.predict(X)
 
 ---
 
-## 2. Reusing component models
+## $P^3$ \#2: Reusing component models
 
 - There are many free parameters when training meta learners:
 
@@ -297,7 +301,7 @@ cate_estimates = model.predict(X)
 - In practice, this often boils down to 'trying out' different
   constellations, e.g. via random search or grid search.
 
-- See [EconML](https://github.com/py-why/EconML/issues/646)
+- See [EconML issue 646](https://github.com/py-why/EconML/issues/646).
 
 ---
 
@@ -337,11 +341,31 @@ cate_estimates = model.predict(X)
 
 ---
 
-## 3. Specific covariate sets
+## The R-Learner: Hyperparameter tuning
 
-1. Example 1: We know that the treatment effect is only a simple
-   function of stirring.
-2. Example 2: Different variants use different features
+![bg left](../imgs/monet_sad_programmer.png)
+
+- We can expect roughly a tripleing of runtime due to not being able
+  to train and reuse component models in isolation.
+- This is even amplified when trying to use a particular component
+  model for other MetaLearners, too.
+
+---
+
+## $P^3$ \#3: Distinct covariate sets
+
+- Different covariates for different components
+  - E.g. we know that the treatment effect is only a function of stirring while the base outcome is a function of many features.
+- Different covariates for different treatments
+  - E.g. assume we have the following treatment variants:
+  1.  No stirring
+  2.  Stirring for 20'
+  3.  Stirring for 40'
+  - where the second and third variant have the additional covariate
+    of the spoon type. We would like to use that covariant to capture
+    heterogeneity, but can't specify that we only have it for specific
+    variants.
+- These features are not at all supported by EconML and CausalML.
 
 ---
 
