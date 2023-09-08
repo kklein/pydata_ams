@@ -55,8 +55,8 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-![bg 100%](../imgs/why_prediction_fails_3.png)
-![bg 100%](../imgs/why_prediction_fails_2.png)
+![bg 80%](../imgs/why_prediction_fails_3.png)
+![bg 80%](../imgs/why_prediction_fails_2.png)
 
 ---
 
@@ -149,15 +149,15 @@ Reality
 
 ---
 
-|              | EconML     | CausalML   |
-| ------------ | ---------- | ---------- |
-| Developed by | MSR/py-why | Uber       |
-| License      | MIT        | Apache 2.0 |
-|              |            |            |
-|              |            |            |
-|              |            |            |
-|              |            |            |
-|              |            |            |
+|                 | EconML     | CausalML   |
+| --------------- | ---------- | ---------- |
+| Developed by    | MSR/py-why | Uber       |
+| License         | MIT        | Apache 2.0 |
+| Features        | asdf       | asdf       |
+|                 | asdf       | asdf       |
+|                 | asdf       | asdf       |
+|                 | asdf       | asdf       |
+| MetaLearner API | sklearn    | sklearn    |
 
 <!-- TODO: Talk about features -->
 
@@ -301,11 +301,47 @@ cate_estimates = model.predict(X)
 
 ---
 
+## A MetaLearner
+
+![](../imgs/component_0.png)
+
+---
+
+## A MetaLearner
+
+![](../imgs/component_1.png)
+
+---
+
+## The R-Learner
+
+![](../imgs/component_2.png)
+
+---
+
+## The R-Learner
+
+![](../imgs/component_3.png)
+
+---
+
+## The R-Learner: Hyperparameter tuning
+
+![](../imgs/component_4.png)
+
+---
+
+## The R-Learner: Hyperparameter tuning
+
+![](../imgs/component_5.png)
+
+---
+
 ## 3. Specific covariate sets
 
 1. Example 1: We know that the treatment effect is only a simple
    function of stirring.
-2. Example 2: Differnt variants use different features
+2. Example 2: Different variants use different features
 
 ---
 
