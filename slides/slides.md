@@ -12,8 +12,9 @@ footer: Kevin Klein, @kevkle
 
 ## Kevin Klein, QuantCo
 
+<!-- _color: "white" -->
+
 ![bg](../imgs/monet_library1.png)
-![](white)
 
 ---
 
