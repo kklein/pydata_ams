@@ -116,17 +116,6 @@ $$
 
 ---
 
-## From treatment effect to policy
-
-$$
-\pi(X) := \begin{cases}
-    \text{stir} ,& \text{if } \hat{\tau}(X) \geq 1\\
-    \text{don't stir},              & \text{otherwise}
-\end{cases}
-$$
-
----
-
 # 3. Estimating heterogeneity on paper
 
 ---
@@ -175,19 +164,17 @@ A randomized control trial usually gives us the first two for free.
 
 ## MetaLearners
 
-- MetaLearners are CATE models which rely on typical, arbitrary machine learning
-  estimators (classifiers or regressors) as components. Their output
-  is an estimate of the heterogeneous treatment effect.
-- An simple, intuitive, yet often somewhat disappointing MetaLearner
-  is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
-- Other examples include the S-Learner, F-Learner, X-Learner, R-Learner,
-  M-Learner, DR-Learner
+MetaLearners are CATE models which rely on typical, arbitrary machine learning estimators (classifiers or regressors) as components. Their output is an estimate of the heterogeneous treatment effect.
 
 ---
 
 ## The T-Learner
 
-![120%](../imgs/t_learner.png)
+![bg left 90%](../imgs/t_learner.png)
+
+- An simple, intuitive, yet often somewhat disappointing MetaLearner
+  is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
+- Other examples include the S-Learner, F-Learner, X-Learner, R-Learner, M-Learner, DR-Learner
 
 <!-- TODO: Create my own visualization. -->
 
@@ -208,8 +195,6 @@ A randomized control trial usually gives us the first two for free.
 |                            | direct policy learnig     |                 |
 |                            | Inference (e.g. p-values) |                 |
 | MetaLearner API            | sklearn                   | sklearn         |
-
-<!-- TODO: Talk about features -->
 
 ---
 
@@ -280,8 +265,7 @@ cate_estimates = model.predict(X)
 - `lightgbm` is a very popular choice for prediction on tabular
   datasets.
 - In particular, it hat native support for working with categorical features.
-  E.g. instead of having to one-hot encode categoricals, one can indicate that a column
-  is to be treated as a categorical.
+  E.g. instead of having to one-hot encode categoricals, one can indicate that a column is to be treated as a categorical.
 
 ---
 
@@ -291,6 +275,12 @@ cate_estimates = model.predict(X)
 
 ![bg 120%](../imgs/numerical_tree.png)
 ![bg 120%](../imgs/categorical_tree.png)
+
+---
+
+## Tying back to our example: what's the difference?
+
+![](../imgs/one-hot-vs-categorical.png)
 
 ---
 
@@ -332,12 +322,6 @@ cate_estimates = model.predict(X)
     categorical_feature=[0],
   )
   ```
-
----
-
-## Tying back to our example: what's the difference?
-
-![](../imgs/one-hot-vs-categorical.png)
 
 ---
 
