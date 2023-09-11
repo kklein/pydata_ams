@@ -41,30 +41,37 @@ footer: Kevin Klein, @kevkle
 
 ---
 
-# When prediction fails
+# Intervention
 
 What happens when we intervene on a data point from the left,
 i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure that a gas stove is used, i.e. `stirring = 1`?
 
-![bg right 100%](../imgs/why_prediction_fails_1.png)
+![bg right 80%](../imgs/why_prediction_fails_1.png)
 
 ---
 
-![bg 50%](../imgs/prediction_success.gv.svg)
-![bg 50%](../imgs/prediction_failure.gv.svg)
+## What happens if we intervene?
+
+<p float="left" align="middle">
+  <img src="../imgs/why_prediction_fails_3.png" width="500" />
+  <img src="../imgs/why_prediction_fails_2.png" width="500" />
+</p>
 
 ---
 
-![bg 80%](../imgs/why_prediction_fails_3.png)
-![bg 80%](../imgs/why_prediction_fails_2.png)
+## It depends
+
+![](../imgs/prediction_success.gv.svg) ![](../imgs/prediction_failure.gv.svg)
 
 ---
 
-# Why heterogeneity
+# Why care about heterogeneity?
 
 ---
 
-![bg 70%](../imgs/treatment_effects_1.png)
+## The true treatment effects: a histogram
+
+![100%](../imgs/treatment_effects_1.png)
 
 ---
 
@@ -85,7 +92,9 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-![bg 70%](../imgs/treatment_effects_2.png)
+## From treatment effect to policy
+
+![100%](../imgs/treatment_effects_2.png)
 
 <!-- TODO: Show delta_pi on plot. -->
 
@@ -99,10 +108,10 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 Desire
 
-| Consumer | Age of consumer | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
-| -------- | --------------- | --------------------------- | ----------------------- | --------------------------- |
-| Bob      | 28              | 21                          | 21.8                    | .8                          |
-| Anne     | 10              | 12                          | 12                      | 0                           |
+| Consumer | Age of consumer | ... | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
+| -------- | --------------- | --- | --------------------------- | ----------------------- | --------------------------- |
+| Bob      | 28              | ... | 21                          | 21.8                    | .8                          |
+| Anne     | 10              | ... | 12                          | 12                      | 0                           |
 
 ---
 
@@ -110,10 +119,10 @@ Desire
 
 Reality
 
-| Consumer | Age of consumer | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
-| -------- | --------------- | --------------------------- | ----------------------- | --------------------------- |
-| Bob      | 28              | 21                          | ?                       | ?                           |
-| Anne     | 10              | ?                           | 12                      | ?                           |
+| Consumer | Age of consumer | ... | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
+| -------- | --------------- | --- | --------------------------- | ----------------------- | --------------------------- |
+| Bob      | 28              | ... | 21                          | ?                       | ?                           |
+| Anne     | 10              | ... | ?                           | 12                      | ?                           |
 
 ---
 
@@ -144,8 +153,14 @@ A randomized control trial usually gives us the first two for free.
   is an estimate of the heterogeneous treatment effect.
 - An simple, intuitive, yet often somewhat disappointing MetaLearner
   is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
-- Other examples are: S-Learner, F-Learner, X-Learner, R-Learner,
+- Other examples include the S-Learner, F-Learner, X-Learner, R-Learner,
   M-Learner, DR-Learner
+
+---
+
+![](../imgs/t_learner.png)
+
+<!-- TODO: Create my own visualization. -->
 
 ---
 
@@ -153,15 +168,17 @@ A randomized control trial usually gives us the first two for free.
 
 ---
 
-|                 | EconML     | CausalML   |
-| --------------- | ---------- | ---------- |
-| Developed by    | MSR/py-why | Uber       |
-| License         | MIT        | Apache 2.0 |
-| Features        | asdf       | asdf       |
-|                 | asdf       | asdf       |
-|                 | asdf       | asdf       |
-|                 | asdf       | asdf       |
-| MetaLearner API | sklearn    | sklearn    |
+## The open-source libraries for CATE estimation
+
+|                            | `EconML`                  | `CausalML`      |
+| -------------------------- | ------------------------- | --------------- |
+| Developed by               | MSR/py-why                | Uber            |
+| License                    | MIT                       | Apache 2.0      |
+| \#releases in past 2 years | 4                         | 7               |
+| Features                   | CATE estimation           | CATE estimation |
+|                            | direct policy learnig     |                 |
+|                            | Inference (e.g. p-values) |                 |
+| MetaLearner API            | sklearn                   | sklearn         |
 
 <!-- TODO: Talk about features -->
 
@@ -194,6 +211,8 @@ $Y = \mu(X) + T \cdot \tau(X)$
 
 ---
 
+## Training a CATE model with `CausalML`
+
 ```python
 # One-hot encoding
 X = pd.concat([
@@ -217,7 +236,9 @@ cate_estimates = model.predict(X)
 
 ---
 
-![bg 70%](../imgs/cate_estimates.png)
+## CATE estimation results
+
+![100%](../imgs/cate_estimates.png)
 
 ---
 
@@ -229,11 +250,13 @@ cate_estimates = model.predict(X)
 
 - `lightgbm` is a very popular choice for prediction on tabular
   datasets.
-- One of is nice features is that it works natively with categorical
-  features.
-  E.g. instead of having to one-hot encode categoricals, one can
-  'tell' `lightgbm` that a single columns is to be treated as a
-  categorical.
+- In particular, it hat native support for working with categorical features.
+  E.g. instead of having to one-hot encode categoricals, one can indicate that a column
+  is to be treated as a categorical.
+
+---
+
+![bg left 120%](../imgs/numerical_tree.png)
 
 ---
 
@@ -241,6 +264,8 @@ cate_estimates = model.predict(X)
 ![bg 120%](../imgs/categorical_tree.png)
 
 ---
+
+## How can we actually use these categoricals?
 
 - Option 1: Use `pandas` `category` dtype
 
@@ -345,10 +370,8 @@ cate_estimates = model.predict(X)
 
 ![bg left](../imgs/monet_sad_programmer.png)
 
-- We can expect roughly a tripleing of runtime due to not being able
-  to train and reuse component models in isolation.
-- This is even amplified when trying to use a particular component
-  model for other MetaLearners, too.
+- We can expect a ~threefold increase of runtime due to not being able to train and reuse component models in isolation.
+- This is even amplified when trying to use a particular component model for other MetaLearners, too.
 
 ---
 
@@ -361,10 +384,7 @@ cate_estimates = model.predict(X)
   1.  No stirring
   2.  Stirring for 20'
   3.  Stirring for 40'
-  - where the second and third variant have the additional covariate
-    of the spoon type. We would like to use that covariant to capture
-    heterogeneity, but can't specify that we only have it for specific
-    variants.
+  - where the second and third variant have the additional covariate of the spoon type. We would like to use that covariant to capture heterogeneity, but can't specify that we only have it for specific variants.
 - These features are not at all supported by EconML and CausalML.
 
 ---
