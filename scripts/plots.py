@@ -161,6 +161,7 @@ def plot_why_prediction_fails() -> None:
     fig.savefig(_plot_root() / "why_prediction_fails_3.png")
 
 
+@cache
 def _treatment_effect_hist():
     df = _df_risotto()
     fig, ax = plt.subplots()
@@ -172,6 +173,7 @@ def _treatment_effect_hist():
 def plot_treatment_effects(threshold: int) -> None:
     """Plot treatment effects."""
     fig, ax, _, _ = deepcopy(_treatment_effect_hist())
+    fig.tight_layout()
     fig.savefig(_plot_root() / "treatment_effects_1.png")
 
     fig, ax, n, patches = deepcopy(_treatment_effect_hist())
@@ -193,7 +195,7 @@ def plot_treatment_effects(threshold: int) -> None:
             Patch(facecolor="grey", edgecolor="grey", label="on the edge"),
         ]
     )
-
+    fig.tight_layout()
     fig.savefig(_plot_root() / "treatment_effects_2.png")
 
 
@@ -222,7 +224,12 @@ def plot_cate_estimates(rng):
     fig, ax = plt.subplots()
     ax.set_xlabel("CATE estimate")
     ax.set_ylabel("CATE")
-    ax.scatter(cate_estimates_econml, df[test_indicator == 1]["treatment_effect"])
+    true_cates = df[test_indicator == 1]["treatment_effect"]
+    ax.scatter(cate_estimates_econml, true_cates)
+    x_min = min(min(cate_estimates_econml), min(true_cates))
+    x_max = max(max(cate_estimates_econml), max(true_cates))
+    ax.plot([x_min, x_max], [x_min, x_max], "-")
+    fig.tight_layout()
 
     fig.savefig(_plot_root() / "cate_estimates.png")
 
