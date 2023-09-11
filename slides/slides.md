@@ -75,9 +75,12 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-## The treatment effects: a histogram
+## Because the world is heterogeneous
 
-![100%](../imgs/treatment_effects_1.png)
+![bg left 100%](../imgs/treatment_effects_1.png)
+
+- Every observation of the histogram corresponds to a consumption of risotto.
+- In a homogeneous setting, we would observe the same treatment effect for all observations.
 
 ---
 
