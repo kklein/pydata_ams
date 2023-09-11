@@ -69,7 +69,7 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-## The true treatment effects: a histogram
+## The treatment effects: a histogram
 
 ![100%](../imgs/treatment_effects_1.png)
 
@@ -94,9 +94,31 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ## From treatment effect to policy
 
-![100%](../imgs/treatment_effects_2.png)
+![bg left 100%](../imgs/treatment_effects_2.png)
 
-<!-- TODO: Show delta_pi on plot. -->
+---
+
+## From treatment effect to policy
+
+![bg left 100%](../imgs/treatment_effects_2.png)
+
+$$
+\pi(X) := \begin{cases}
+    \text{stir} & \text{if } \hat{\tau}(X) \geq 1\text{USD}\\
+    \text{don't stir}              & \text{otherwise}
+\end{cases}
+$$
+
+---
+
+## From treatment effect to policy
+
+$$
+\pi(X) := \begin{cases}
+    \text{stir} ,& \text{if } \hat{\tau}(X) \geq 1\\
+    \text{don't stir},              & \text{otherwise}
+\end{cases}
+$$
 
 ---
 
