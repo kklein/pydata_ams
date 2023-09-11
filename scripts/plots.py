@@ -111,22 +111,45 @@ def plot_why_prediction_fails() -> None:
     """Plot violin plot indicating when prediction might fail."""
     x0, y0 = 1, 4
     fig, ax = deepcopy(_prediction_failure())
-    ax.plot([x0], [y0], "o")
+    ax.plot([x0], [y0], "o", markersize=10, c="orange")
+    fig.tight_layout()
     fig.savefig(_plot_root() / "why_prediction_fails_1.png")
 
     fig, ax = deepcopy(_prediction_failure())
 
     x1, y1 = 2, 4
-    ax.plot([x0, x1], [y0, y1], "o")
-    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.2)
+    # ax.plot([x0], [y0], "o", markersize=10, c="orange")
+    ax.plot([x0, x1], [y0, y1], "o", markersize=10, c="orange")
+    ax.arrow(
+        x0,
+        y0,
+        (x1 - x0),
+        (y1 - y0),
+        length_includes_head=True,
+        width=0.3,
+        head_length=0.3,
+        color="orange",
+        head_width=1.5,
+    )
+    fig.tight_layout()
     fig.savefig(_plot_root() / "why_prediction_fails_2.png")
 
     fig, ax = deepcopy(_prediction_failure())
-    x1, y1 = 2, 7
-    ax.plot([x0, x1], [y0, y1], "o")
-    ax.arrow(x0, y0, (x1 - x0), (y1 - y0), length_includes_head=True, head_width=0.2)
+    x1, y1 = 2, 8
+    ax.plot([x0, x1], [y0, y1], "o", markersize=10, c="orange")
+    ax.arrow(
+        x0,
+        y0,
+        (x1 - x0),
+        (y1 - y0),
+        length_includes_head=True,
+        width=0.1,
+        head_length=0.4,
+        color="orange",
+        head_width=0.4,
+    )
     epsilon = 0.2
-    ax.plot([x1 + epsilon, x1 + epsilon], [y0, y1], "--")
+    ax.plot([x1 + epsilon, x1 + epsilon], [y0, y1], "-", color="orange")
     mid = (y0 + y1) / 2
     ax.annotate(
         "treatment effect",
@@ -134,6 +157,7 @@ def plot_why_prediction_fails() -> None:
         xytext=(x1 + 2 * epsilon, mid),
         arrowprops={"facecolor": "black", "shrink": 0.05},
     )
+    fig.tight_layout()
     fig.savefig(_plot_root() / "why_prediction_fails_3.png")
 
 
