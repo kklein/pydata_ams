@@ -111,11 +111,11 @@ def _f_tau_nationality(nationality, rng, mapping=None):
         "India": 0.8,
         "Italy": 2,
         "Iceland": 0.3,
-        "Iraq": 1.2,
-        "Israel": 1.2,
-        "Indonesia": 0.8,
+        "Iraq": 1.5,
+        "Israel": 0.7,
+        "Indonesia": 1.1,
         "Iran": 1.2,
-        "Ireland": 0.3,
+        "Ireland": 0,
     }
     result = nationality.apply(lambda x: mapping[str(x)])
     return result.astype("float")
@@ -131,7 +131,7 @@ def _tau(
         df_covariates["nationality"], rng, mapping=mapping
     )
     noise = rng.normal(0, 0.1, size=n)
-    return 3 * tau_nationality + noise
+    return tau_nationality + noise
 
 
 def gen_outcomes(
