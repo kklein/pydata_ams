@@ -19,10 +19,11 @@ footer: Kevin Klein, @kevkle
 
 # Agenda
 
-1. Why Causal Inference and why heterogeneity?
-2. How can we estimate heterogeneous treatment effects on paper?
-3. How can we estimate heterogeneous treatment effects in practice?
-4. What are we missing from EconML and CausalML?
+1. Why Causal Inference?
+2. Why care about heterogeneity?
+3. How can we estimate heterogeneous treatment effects on paper?
+4. How can we estimate heterogeneous treatment effects in practice?
+5. What am I missing from `EconML` and `CausalML`?
 
 ---
 
@@ -38,6 +39,10 @@ footer: Kevin Klein, @kevkle
 - Consumers of risotto are **free to decide how much they pay** for
   their risotto.
 - Naturally we wonder: should we be stirring?
+
+---
+
+# 1. Why care about Causal Inference?
 
 ---
 
@@ -65,7 +70,7 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
-# Why care about heterogeneity?
+# 2. Why care about heterogeneity?
 
 ---
 
@@ -122,7 +127,7 @@ $$
 
 ---
 
-# Estimating heterogeneity on paper
+# 3. Estimating heterogeneity on paper
 
 ---
 
@@ -180,13 +185,15 @@ A randomized control trial usually gives us the first two for free.
 
 ---
 
-![](../imgs/t_learner.png)
+## The T-Learner
+
+![120%](../imgs/t_learner.png)
 
 <!-- TODO: Create my own visualization. -->
 
 ---
 
-# Estimating heterogeneity in practice
+# 4. Estimating heterogeneity in practice
 
 ---
 
@@ -264,7 +271,7 @@ cate_estimates = model.predict(X)
 
 ---
 
-# Pains and problems in practice ($P^3$)
+# 5. Pains and problems in practice ($P^3$)
 
 ---
 
