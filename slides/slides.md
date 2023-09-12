@@ -286,6 +286,10 @@ cate_estimates = model.predict(X)
 
 # 5. Pains and problems in practice ($P^3$)
 
+![bg left](../imgs/monet_sad_programmer.png)
+
+(That make me look as sad as this person.)
+
 ---
 
 ## $P^3$\#1: Categorical features
@@ -311,7 +315,7 @@ cate_estimates = model.predict(X)
 
 ---
 
-## How can we actually use these categoricals?
+## How can we actually use these categoricals with `lightgbm`?
 
 * Option 1: Use `pandas` `category` dtype
 
@@ -330,6 +334,8 @@ cate_estimates = model.predict(X)
 
 ---
 
+## How using `lightgbm`'s categoricals in `EconML` and `CausalML`?
+
 * Unfortunately, both options don't work with `CausalML` and `EconML`.
 * Option 1 is not possible since both convert `pandas` input to `numpy` objects:
   - `X, treatment, y = convert_pd_to_np(X, treatment, y)`
@@ -339,7 +345,7 @@ cate_estimates = model.predict(X)
 
 ---
 
-* A hack is - of course - possible to indirectly use option 2:
+A hack is - of course - possible in order to indirectly use option 2:
   ```python
   from functools import partialmethod
   from lightgbm import LGBMRegressor
@@ -399,15 +405,14 @@ cate_estimates = model.predict(X)
 
 ## The R-Learner: Hyperparameter tuning
 
-![bg left](../imgs/monet_sad_programmer.png)
-* Unfortuntaely, I haven't find a supported way of reusing already trained components with most `EconML` and `CausalML` CATE estimators.
+* Unfortuntaely, I haven't found a supported way of reusing already trained components with most `EconML` and `CausalML` CATE estimators.
   * See e.g. [EconML issue 646](https://github.com/py-why/EconML/issues/646).
 * We can expect a ~3x increase of runtime due to not being able to train and reuse component models.
 * This is even amplified when trying to use a particular component model for other MetaLearners.
 
 ---
 
-## $P^3$ \#3: Distinct covariate sets
+## $P^3$ \#3: Distinct covariate sets: Use case 1
 
 ![bg right 100%](../imgs/covariate_sets.drawio.svg)
 
@@ -416,15 +421,22 @@ cate_estimates = model.predict(X)
 
 ---
 
+## $P^3$ \#3: Distinct covariate sets: Use case 2
+* Let's assume we have 3 instead of 2 treatment variants.
+
+* | treatment variant 1 | treatment variant 2| covariates            |
+  |------------------|------------------|-------------------------|
+  | No stirring      | Stirring for 20' | $X$                     |
+  | No stirring      | Stirring for 40' | $X$                     |
+  | Stirring for 20' | Stirring for 40' | $X \cup$ {`spoon_type`} |
+
+* Ideally, the MetaLearner implementation would always simply as many available features as possible when comparing different treatment variants.
+
+---
+
 ## $P^3$ \#3: Distinct covariate sets
 
-* Different covariates for different treatments
-  * E.g. assume we have the following treatment variants:
-  1.  No stirring
-  2.  Stirring for 20'
-  3.  Stirring for 40'
-  * where the second and third variant have the additional covariate of the spoon type. We would like to use that covariant to capture heterogeneity, but can't specify that we only have it for specific variants.
-* These features are not at all supported by `EconML` and `CausalML`.
+Whatever the motivation of using different covariate sets inside a MetaLearner, afaict `CausalML` and `EconML` don't support them.
 
 ---
 
@@ -452,10 +464,12 @@ https://www.quantco.com/
 
 ---
 
-# Acknowledgements
+## Lastly...
 
-- Matheus Facure: [Causal Inference for the Brave and True](https://matheusfacure.github.io/python-causality-handbook/landing-page.html)
-- Matthias Lux, Norbert Stoop, Daan Nilis, Julie Vienne
+* Thanks for listening!
+* Special thanks to Daan Nilis, Julie Vienne, Matthias Lux, Norbert Stoop
+* Shout out to Matheus Facure's [Causal Inference for the Brave and True](https://matheusfacure.github.io/python-causality-handbook/landing-page.html)
+* You can find the slides and according code at [github.com/kklein/pydata_ams](https://github.com/kklein/pydata_ams)
 
 ---
 
