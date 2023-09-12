@@ -40,7 +40,7 @@ paginate: true
     **stirring**
 * Consumers of risotto are **free to decide how much they pay** for
   their risotto.
-* Naturally we wonder: should we be stirring?
+* Naturally we wonder: **should we be stirring**?
 
 ---
 
@@ -52,10 +52,9 @@ paginate: true
 
 ---
 
-# Intervention
+# Interventions
 
-What happens when we intervene on a data point from the left,
-i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure that the risotto is stirred, i.e. `stirring = 1`?
+What happens when we intervene on a data point from the left, i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure that the risotto is stirred, i.e. `stirring := 1`?
 
 ![bg right 80%](../imgs/why_prediction_fails_1.png)
 
@@ -153,19 +152,19 @@ If we had the following kind of information, everything would be nice and easy. 
   (CATE), which we can actually estimate:
   $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
   \mathbb{E}[\text{payment}|X\text{, no stirring}]$
-* In most of the literature CATE $\equiv$ heterogeneous treatment effect
+* In most of the literature 'CATE' and 'heterogeneous treatment effect' are used as synonyms.
 
 ---
 
 ## Conventional assumptions for estimating heterogeneous treatment effects
 
-* Positivity/overlap
-* Conditional ignorability/unconfoundedness
-* Stable Unit Treatment Value (SUTVA)
+- Positivity/overlap
+- Conditional ignorability/unconfoundedness
+- Stable Unit Treatment Value (SUTVA)
 
 A randomized control trial usually gives us the first two for free.
 
-For more information see e.g. [Athey and Imbens, 2016](https://arxiv.org/pdf/1607.00698.pdf)
+For more information see e.g. [Athey and Imbens, 2016](https://arxiv.org/pdf/1607.00698.pdf).
 
 ---
 
@@ -182,7 +181,7 @@ For more information see e.g. [Athey and Imbens, 2016](https://arxiv.org/pdf/160
 
 ![bg left 80%](../imgs/metalearner.drawio.svg)
 
-* $X$: Covariates
+* $X$: Covariates/features
 * $T$: Treatment assignments
 * $Y$: Observed outcomes
 * $\hat{\tau}(X)$: Estimate of the heterogeneous treatment effect/CATE
@@ -287,8 +286,6 @@ cate_estimates = model.predict(X)
 # 5. Pains and problems in practice ($P^3$)
 
 ![bg left](../imgs/monet_sad_programmer.png)
-
-(That make me look as sad as this person.)
 
 ---
 
@@ -467,7 +464,7 @@ https://www.quantco.com/
 ## Lastly...
 
 * Thanks for listening!
-* Special thanks to Daan Nilis, Julie Vienne, Matthias Lux, Norbert Stoop
+* Special thanks to Daan Nilis, Ege Karaismailoğlu, Julie Vienne, Matthias Lux, Norbert Stoop
 * Shout out to Matheus Facure's [Causal Inference for the Brave and True](https://matheusfacure.github.io/python-causality-handbook/landing-page.html)
 * You can find the slides and according code at [github.com/kklein/pydata_ams](https://github.com/kklein/pydata_ams)
 
