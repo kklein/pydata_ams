@@ -32,14 +32,14 @@ footer: Kevin Klein, @kevkle
 
 ![bg right 100%](../imgs/monet_risotto.png)
 
-- Risotto can either be prepared
-  - in a laborous and delicate fashion, involving a lot of
+* Risotto can either be prepared
+  * in a laborous and delicate fashion, involving a lot of
     **stirring** or
-  - in a cut-throat, cantine style fashion, **not** involving a lot of
+  * in a cut-throat, cantine style fashion, **not** involving a lot of
     **stirring**
-- Consumers of risotto are **free to decide how much they pay** for
+* Consumers of risotto are **free to decide how much they pay** for
   their risotto.
-- Naturally we wonder: should we be stirring?
+* Naturally we wonder: should we be stirring?
 
 ---
 
@@ -79,25 +79,8 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ![bg left 100%](../imgs/treatment_effects_1.png)
 
-- Every observation of the histogram corresponds to a consumption of risotto.
-- In a homogeneous setting, we would observe the same treatment effect for all observations.
-
----
-
-## To stir or not to stir, the maths
-
-- Assume that the cost of stirring amounts to 1$ per unit.
-- Also assume that the overall revenue when never stirring is $R$.
-- Then, the overall revenue when **always stirring** is $R - n \cdot 1 +
-  \delta_1$
-  - The plot from the previous slide tells us that $n \cdot 1 > \delta$.
-- The overrall revenue of **stirring when we expect it to pay off**: $R - k \cdot 1 +
-  \delta_{\pi}$
-  - We can condition on certain 'covariates'/features to decide for whom it
-    pays off.
-  - When doing this 'right', we get that $\delta_{\pi} > k \cdot 1$.
-
-<!-- TODO: Use colors. -->
+* Every observation of the histogram corresponds to a consumption of risotto.
+* In a homogeneous setting, we would observe the same treatment effect for all observations.
 
 ---
 
@@ -148,8 +131,8 @@ Reality
 
 ## What now?
 
-- We can't know the Individual Treatment Effect (ITE).
-- Yet, we can define an estimand, the Conditional Average Treatment Effect
+* We can't know the Individual Treatment Effect (ITE).
+* Yet, we can define an estimand, the Conditional Average Treatment Effect
   (CATE), which we can actually estimate:
   $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
   \mathbb{E}[\text{payment}|X\text{, no stirring}]$
@@ -158,9 +141,9 @@ Reality
 
 ## Conventional assumptions for estimating heterogeneous treatment effects
 
-- Positivity/overlap
-- Conditional ignorability/unconfoundedness
-- Stable Unit Treatment Value (SUTVA)
+* Positivity/overlap
+* Conditional ignorability/unconfoundedness
+* Stable Unit Treatment Value (SUTVA)
 
 A randomized control trial usually gives us the first two for free.
 
@@ -176,9 +159,8 @@ MetaLearners are CATE models which rely on typical, arbitrary machine learning e
 
 ![bg left 90%](../imgs/t_learner.png)
 
-- An simple, intuitive, yet often somewhat disappointing MetaLearner
-  is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
-- Other examples include the S-Learner, F-Learner, X-Learner, R-Learner, M-Learner, DR-Learner
+* A simple, intuitive, yet often somewhat disappointing MetaLearner is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
+* Other examples include the S-Learner, F-Learner, X-Learner, R-Learner, M-Learner, DR-Learner
 
 <!-- TODO: Create my own visualization. -->
 
@@ -266,9 +248,8 @@ cate_estimates = model.predict(X)
 
 ## $P^3$\#1: Categorical features
 
-- `lightgbm` is a very popular choice for prediction on tabular
-  datasets.
-- In particular, it hat native support for working with categorical features.
+* `lightgbm` is a very popular choice for prediction on tabular datasets.
+* In particular, it has native support for working with categorical features.
   E.g. instead of having to one-hot encode categoricals, one can indicate that a column is to be treated as a categorical.
 
 ---
@@ -290,7 +271,7 @@ cate_estimates = model.predict(X)
 
 ## How can we actually use these categoricals?
 
-- Option 1: Use `pandas` `category` dtype
+* Option 1: Use `pandas` `category` dtype
 
   ```python
   df["nationality"] = df["nationality"].astype("category")
@@ -298,7 +279,7 @@ cate_estimates = model.predict(X)
   model.fit(df[["nationality"]], df["payment"])
   ```
 
-- Option 2: Explicitly set `categorical_indices`
+* Option 2: Explicitly set `categorical_indices`
   ```python
   df["nationality"] = df["nationality"].astype("category").cat.codes
   model = lgbm.LGBMRegressor(categorical_feature=[0])
@@ -307,17 +288,16 @@ cate_estimates = model.predict(X)
 
 ---
 
-- Unfortunately, both options don't work with `causalml` and `econml`.
-- Option 1 is not possible since both convert `pandas` input to `numpy`
-  objects in a 'validation' step.
+* Unfortunately, both options don't work with `causalml` and `econml`.
+* Option 1 is not possible since both convert `pandas` input to `numpy` objects:
   - `X, treatment, y = convert_pd_to_np(X, treatment, y)`
   - https://github.com/uber/causalml/blob/3b3daaa3cd2ef1960028908c152cfd242b37712c/causalml/inference/meta/rlearner.py#L100
-- Option 2 is not possible since constructor parameters can't be
+* Option 2 is not possible since constructor parameters can't be
   passed.
 
 ---
 
-- A hack is - of course - possible to indirectly use option 2:
+* A hack is - of course - possible to indirectly use option 2:
   ```python
   from functools import partialmethod
   from lightgbm import LGBMRegressor
@@ -331,19 +311,17 @@ cate_estimates = model.predict(X)
 
 ## $P^3$ \#2: Reusing component models
 
-- There are many free parameters when training meta learners:
+* There are many free parameters when training meta learners:
 
   1. Choose which meta learner (e.g. R-Learner)
      - This is hard, see [Curth, van der Schar (2021)](https://proceedings.mlr.press/v130/curth21a.html)
   2. Per estimand, choose an estimator (e.g. boosted trees)
   3. Per estimator
+	 * per hyperparameter (e.g. depth), choose a value (e.g.12)
 
-  - per hyperparameter (e.g. depth), choose a value (e.g.12)
+* In practice, this often boils down to 'trying out' different constellations, e.g. via random search or grid search.
 
-- In practice, this often boils down to 'trying out' different
-  constellations, e.g. via random search or grid search.
-
-- See [EconML issue 646](https://github.com/py-why/EconML/issues/646).
+* See [EconML issue 646](https://github.com/py-why/EconML/issues/646).
 
 ---
 
@@ -387,32 +365,32 @@ cate_estimates = model.predict(X)
 
 ![bg left](../imgs/monet_sad_programmer.png)
 
-- We can expect a ~threefold increase of runtime due to not being able to train and reuse component models in isolation.
-- This is even amplified when trying to use a particular component model for other MetaLearners, too.
+* We can expect a ~threefold increase of runtime due to not being able to train and reuse component models in isolation.
+* This is even amplified when trying to use a particular component model for other MetaLearners, too.
 
 ---
 
 ## $P^3$ \#3: Distinct covariate sets
 
-- Different covariates for different components
-  - E.g. we know that the treatment effect is only a function of stirring while the base outcome is a function of many features.
-- Different covariates for different treatments
-  - E.g. assume we have the following treatment variants:
+* Different covariates for different components
+  * E.g. we know that the treatment effect is only a function of stirring while the base outcome is a function of many features.
+* Different covariates for different treatments
+  * E.g. assume we have the following treatment variants:
   1.  No stirring
   2.  Stirring for 20'
   3.  Stirring for 40'
-  - where the second and third variant have the additional covariate of the spoon type. We would like to use that covariant to capture heterogeneity, but can't specify that we only have it for specific variants.
-- These features are not at all supported by EconML and CausalML.
+  * where the second and third variant have the additional covariate of the spoon type. We would like to use that covariant to capture heterogeneity, but can't specify that we only have it for specific variants.
+* These features are not at all supported by EconML and CausalML.
 
 ---
 
 ## And more...
 
-- DoubleML: Biased final stage
-- Tricky to combine cross-fitting with further cross-splitting
+* DoubleML: Biased final stage
+* Tricky to combine cross-fitting with further cross-splitting
   (e.g. super learning or splits) -> also an engineering problem
   (e.g. multiprocessing)
-- Read out treatment effects of categoricals when using DML
+* Read out treatment effects of categoricals when using DML
 
 ---
 
@@ -434,3 +412,21 @@ https://www.quantco.com/
 
 - Matheus Facure: [Causal Inference for the Brave and True](https://matheusfacure.github.io/python-causality-handbook/landing-page.html)
 - Matthias Lux, Norbert Stoop
+
+---
+
+
+## To stir or not to stir, the maths
+
+* Assume that the cost of stirring amounts to 1$ per unit.
+* Also assume that the overall revenue when never stirring is $R$.
+* Then, the overall revenue when **always stirring** is $R - n \cdot 1 +
+  \delta_1$
+  * The plot from the previous slide tells us that $n \cdot 1 > \delta$.
+* The overrall revenue of **stirring when we expect it to pay off**: $R - k \cdot 1 +
+  \delta_{\pi}$
+  * We can condition on certain 'covariates'/features to decide for whom it
+    pays off.
+  * When doing this 'right', we get that $\delta_{\pi} > k \cdot 1$.
+
+---
