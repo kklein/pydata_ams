@@ -21,7 +21,7 @@ paginate: true
 
 # Agenda
 
-1. Why Causal Inference?
+1. Why care about Causal Inference?
 2. Why care about heterogeneity?
 3. How can we estimate heterogeneous treatment effects on paper?
 4. How can we estimate heterogeneous treatment effects in practice?
@@ -121,7 +121,7 @@ $$
 
 ---
 
-# 3. Estimating heterogeneity on paper
+# 3. How can we estimate heterogeneous treatment effects on paper?
 
 ---
 
@@ -165,43 +165,66 @@ If we had the following kind of information, everything would be nice and easy. 
 
 A randomized control trial usually gives us the first two for free.
 
+For more information see e.g. [Athey and Imbens, 2016](https://arxiv.org/pdf/1607.00698.pdf)
+
 ---
 
 ## MetaLearners
 
-* MetaLearners are CATE models which rely on typical, arbitrary machine learning estimators (classifiers or regressors) as components.
-* Input: Covariates $X$, treatment assignments $T$, observed outcomes $Y$
-* Output: estimate of the heterogeneous treatment effect $\hat{\tau}(X)$
+![bg left 50%](../imgs/metalearner2.drawio.svg)
+
+* MetaLearners are **CATE models** which rely on typical, **arbitrary machine learning estimators** (classifiers or regressors) as **components**.
+* Some examples include the S-Learner, T-Learner, F-Learner, X-Learner, R-Learner, M-Learner and DR-Learner.
+
+---
+
+## MetaLearners
+
+![bg left 80%](../imgs/metalearner.drawio.svg)
+
+* $X$: Covariates
+* $T$: Treatment assignments
+* $Y$: Observed outcomes
+* $\hat{\tau}(X)$: Estimate of the heterogeneous treatment effect/CATE
+
 
 ---
 
 ## The T-Learner
 
-![bg left 90%](../imgs/t_learner.png)
-
-* A simple and intuitive MetaLearner is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
-* Unfortunately, it is often somewhat disappointing.
-* Other examples include the S-Learner, F-Learner, X-Learner, R-Learner, M-Learner, DR-Learner
-
-<!-- TODO: Create my own visualization. -->
+![90%](../imgs/tlearner1.drawio.svg)
 
 ---
 
-# 4. Estimating heterogeneity in practice
+## The T-Learner
+
+![90%](../imgs/tlearner2.drawio.svg)
+
+
+---
+
+## The T-Learner
+
+![90%](../imgs/tlearner3.drawio.svg)
+
+
+---
+
+# 4. How can we estimate heterogeneous treatment effects in practice?
 
 ---
 
 ## The open-source libraries for CATE estimation
 
 |                            | `EconML`                  | `CausalML`      |
-| -------------------------- | ------------------------- | --------------- |
+|----------------------------|---------------------------|-----------------|
 | Developed by               | MSR/py-why                | Uber            |
 | License                    | MIT                       | Apache 2.0      |
 | \#releases in past 2 years | 4                         | 7               |
 | Features                   | CATE estimation           | CATE estimation |
 |                            | direct policy learnig     |                 |
-|                            | Inference (e.g. p-values) |                 |
-| MetaLearner API            | sklearn                   | sklearn         |
+|                            | inference (e.g. p-values) |                 |
+| MetaLearner API            | `sklearn`                 | `sklearn`       |
 
 ---
 
@@ -340,59 +363,61 @@ cate_estimates = model.predict(X)
 
 * In practice, this often boils down to 'trying out' different constellations, e.g. via random search or grid search.
 
-* See [EconML issue 646](https://github.com/py-why/EconML/issues/646).
-
 ---
 
-## A MetaLearner
+## The R-Learner
 
-![](../imgs/component_0.png)
-
----
-
-## A MetaLearner
-
-![](../imgs/component_1.png)
+![100%](../imgs/rlearner1.drawio.svg)
 
 ---
 
 ## The R-Learner
 
-![](../imgs/component_2.png)
+![](../imgs/rlearner2.drawio.svg)
 
 ---
 
-## The R-Learner
 
-![](../imgs/component_3.png)
+## The R-Learner: Hyperparameter tuning
+
+![](../imgs/rlearner4.drawio.svg)
 
 ---
 
 ## The R-Learner: Hyperparameter tuning
 
-![](../imgs/component_4.png)
+![](../imgs/rlearner3.drawio.svg)
 
 ---
 
+
 ## The R-Learner: Hyperparameter tuning
 
-![](../imgs/component_5.png)
+![](../imgs/rlearner6.drawio.svg)
 
 ---
 
 ## The R-Learner: Hyperparameter tuning
 
 ![bg left](../imgs/monet_sad_programmer.png)
-
-* We can expect a ~threefold increase of runtime due to not being able to train and reuse component models in isolation.
-* This is even amplified when trying to use a particular component model for other MetaLearners, too.
+* Unfortuntaely, I haven't find a supported way of reusing already trained components with most `EconML` and `CausalML` CATE estimators.
+  * See e.g. [EconML issue 646](https://github.com/py-why/EconML/issues/646).
+* We can expect a ~3x increase of runtime due to not being able to train and reuse component models.
+* This is even amplified when trying to use a particular component model for other MetaLearners.
 
 ---
 
 ## $P^3$ \#3: Distinct covariate sets
 
-* Different covariates for different components
-  * E.g. we know that the treatment effect is only a function of stirring while the base outcome is a function of many features.
+![bg right 100%](../imgs/covariate_sets.drawio.svg)
+
+* We might want to use different covariates for different components models inside of a MetaLearner.
+  * E.g. we know that the treatment effect is only a function of `nationality` while the base outcome is a function of many more features.
+
+---
+
+## $P^3$ \#3: Distinct covariate sets
+
 * Different covariates for different treatments
   * E.g. assume we have the following treatment variants:
   1.  No stirring
@@ -449,3 +474,7 @@ https://www.quantco.com/
   * When doing this 'right', we get that $\delta_{\pi} > k \cdot 1$.
 
 ---
+
+## Material
+
+- R-Learner: [Nie and Wagner, 2020](https://arxiv.org/pdf/1712.04912.pdf)
