@@ -48,6 +48,10 @@ paginate: true
 
 ---
 
+![bg right 80%](../imgs/why_prediction_fails_1.png)
+
+---
+
 # Intervention
 
 What happens when we intervene on a data point from the left,
@@ -57,6 +61,7 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
 
 ---
 
+
 ## What happens if we intervene?
 
 <p float="left" align="middle">
@@ -64,11 +69,23 @@ i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure tha
   <img src="../imgs/why_prediction_fails_2.png" width="500" />
 </p>
 
+
 ---
 
 ## It depends
 
-![](../imgs/prediction_success.gv.svg) ![](../imgs/prediction_failure.gv.svg)
+<p float="left" align="middle">
+  <img src="../imgs/prediction_success.gv.svg" style="margin-right:100px;"/>
+  <img src="../imgs/prediction_failure.gv.svg" style="margin-left:300px;"/>
+</p>
+
+
+<p float="left" align="middle">
+  <img src="../imgs/why_prediction_fails_3.png" width="500" />
+  <img src="../imgs/why_prediction_fails_2.png" width="500" />
+</p>
+
+
 
 ---
 
