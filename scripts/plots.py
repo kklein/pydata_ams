@@ -166,9 +166,7 @@ def _treatment_effect_hist():
     df = _df_risotto()
     fig, ax = plt.subplots()
     n, _, patches = ax.hist(df["treatment_effect"], bins=20)
-    ax.set_xlabel(
-        "$\\hat{\\tau}$: estimated difference in payment \n (estimated treatment effect)"
-    )
+    ax.set_xlabel("$\\tau$: difference in payment \n (treatment effect)")
     return fig, ax, n, patches
 
 
