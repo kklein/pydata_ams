@@ -6,6 +6,7 @@ keywords: marp,marp-cli,slide
 url: https://marp.app/
 image: https://marp.app/og-image.jpg
 footer: Kevin Klein, @kevkle
+paginate: true
 ---
 
 # Causal Inference Libraries: What They Do and What I'd Like Them to Do
