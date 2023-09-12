@@ -50,7 +50,7 @@ footer: Kevin Klein, @kevkle
 # Intervention
 
 What happens when we intervene on a data point from the left,
-i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure that a gas stove is used, i.e. `stirring = 1`?
+i.e. `stirring = 0`, and now - keeping everything else unchanged - make sure that the risotto is stirred, i.e. `stirring = 1`?
 
 ![bg right 80%](../imgs/why_prediction_fails_1.png)
 
@@ -107,25 +107,24 @@ $$
 
 ---
 
-## The fundamental problem of Causal Inference
+## The fundamental problem of Causal Inference: Desire
 
-Desire
+| Age of consumer | ... | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
+| --------------- | --- | --------------------------- | ----------------------- | --------------------------- |
+| 28              | ... | 21                          | 21.8                    | .8                          |
+| 10              | ... | 12                          | 12                      | 0                           |
 
-| Consumer | Age of consumer | ... | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
-| -------- | --------------- | --- | --------------------------- | ----------------------- | --------------------------- |
-| Bob      | 28              | ... | 21                          | 21.8                    | .8                          |
-| Anne     | 10              | ... | 12                          | 12                      | 0                           |
+If we had the following kind of information, everything would be nice and easy. Unfortunately, we don't.
 
 ---
 
-## The fundamental problem of Causal Inference
+## The fundamental problem of Causal Inference: Reality
 
-Reality
 
-| Consumer | Age of consumer | ... | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
-| -------- | --------------- | --- | --------------------------- | ----------------------- | --------------------------- |
-| Bob      | 28              | ... | 21                          | ?                       | ?                           |
-| Anne     | 10              | ... | ?                           | 12                      | ?                           |
+|  Age of consumer | ... | Non-stirred outcome/payment | Stirred outcome/payment | Individual treatment effect |
+|  --------------- | --- | --------------------------- | ----------------------- | --------------------------- |
+|  28              | ... | 21                          | ?                       | ?                           |
+|  10              | ... | ?                           | 12                      | ?                           |
 
 ---
 
@@ -151,7 +150,9 @@ A randomized control trial usually gives us the first two for free.
 
 ## MetaLearners
 
-MetaLearners are CATE models which rely on typical, arbitrary machine learning estimators (classifiers or regressors) as components. Their output is an estimate of the heterogeneous treatment effect.
+* MetaLearners are CATE models which rely on typical, arbitrary machine learning estimators (classifiers or regressors) as components.
+* Input: Covariates $X$, treatment assignments $T$, observed outcomes $Y$
+* Output: estimate of the heterogeneous treatment effect $\hat{\tau}(X)$
 
 ---
 
@@ -159,7 +160,8 @@ MetaLearners are CATE models which rely on typical, arbitrary machine learning e
 
 ![bg left 90%](../imgs/t_learner.png)
 
-* A simple, intuitive, yet often somewhat disappointing MetaLearner is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
+* A simple and intuitive MetaLearner is the T-Learner: $\hat{\tau}(X) = \mu_1(X) - \mu_0(X)$
+* Unfortunately, it is often somewhat disappointing.
 * Other examples include the S-Learner, F-Learner, X-Learner, R-Learner, M-Learner, DR-Learner
 
 <!-- TODO: Create my own visualization. -->
@@ -192,16 +194,14 @@ MetaLearners are CATE models which rely on typical, arbitrary machine learning e
 
 ## Risotto consumption: a simulation
 
-|    age | nationality | chef_rating | gas_stove | $\mu$ | $T$ | $\tau$ |   $Y$ |
-| -----: | :---------- | ----------: | --------: | ----: | --: | -----: | ----: |
-|  50.77 | Indonesia   |        0.53 |         1 | 20.73 |   1 |   0.34 | 21.08 |
-|  59.48 | Iraq        |        0.46 |         0 | 20.46 |   0 |   0.76 | 20.46 |
-|  47.25 | India       |        0.46 |         0 | 24.29 |   0 |   0.19 | 24.29 |
-|  22.21 | Italy       |        0.58 |         0 | 15.90 |   1 |   0.88 | 16.79 |
-| 100.40 | India       |        0.58 |         1 | 29.95 |   1 |   0.30 | 30.25 |
+|    age | nationality | chef_rating | gas_stove | $\mu(X)$ | $T$ | $\tau(X)$ |   $Y$ |
+|-------:|:------------|------------:|----------:|---------:|----:|----------:|------:|
+|  50.77 | Indonesia   |        0.53 |         1 |    20.73 |   1 |      0.34 | 21.08 |
+|  59.48 | Iraq        |        0.46 |         0 |    20.46 |   0 |      0.76 | 20.46 |
+|  22.21 | Italy       |        0.58 |         0 |    15.90 |   1 |      0.88 | 16.79 |
 
 $\mu(X) \equiv$ the 'base outcome', i.e. outcome/payment without stirring
-$T \equiv$ the treatment, whether the risotto has been stirred or not
+$T \equiv$ the treatment, whether the risotto has been stirred (1) or not (0)
 $\tau(X) \equiv$ the heterogeneous treatment effect
 $Y \equiv$ the outcome, the final payment
 $Y = \mu(X) + T \cdot \tau(X)$
