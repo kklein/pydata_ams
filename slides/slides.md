@@ -288,7 +288,7 @@ cate_estimates = model.predict(X)
 
 ---
 
-* Unfortunately, both options don't work with `causalml` and `econml`.
+* Unfortunately, both options don't work with `CausalML` and `EconML`.
 * Option 1 is not possible since both convert `pandas` input to `numpy` objects:
   - `X, treatment, y = convert_pd_to_np(X, treatment, y)`
   - https://github.com/uber/causalml/blob/3b3daaa3cd2ef1960028908c152cfd242b37712c/causalml/inference/meta/rlearner.py#L100
@@ -380,7 +380,7 @@ cate_estimates = model.predict(X)
   2.  Stirring for 20'
   3.  Stirring for 40'
   * where the second and third variant have the additional covariate of the spoon type. We would like to use that covariant to capture heterogeneity, but can't specify that we only have it for specific variants.
-* These features are not at all supported by EconML and CausalML.
+* These features are not at all supported by `EconML` and `CausalML`.
 
 ---
 
