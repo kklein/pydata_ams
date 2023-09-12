@@ -135,6 +135,7 @@ If we had the following kind of information, everything would be nice and easy. 
   (CATE), which we can actually estimate:
   $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
   \mathbb{E}[\text{payment}|X\text{, no stirring}]$
+* In most of the literature CATE $\equiv$ heterogeneous treatment effect
 
 ---
 
@@ -411,7 +412,7 @@ https://www.quantco.com/
 # Acknowledgements
 
 - Matheus Facure: [Causal Inference for the Brave and True](https://matheusfacure.github.io/python-causality-handbook/landing-page.html)
-- Matthias Lux, Norbert Stoop
+- Matthias Lux, Norbert Stoop, Daan Nilis, Julie Vienne
 
 ---
 
