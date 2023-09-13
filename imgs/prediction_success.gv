@@ -1,0 +1,5 @@
+digraph prediction_success {
+	stirring [label=Stirring]
+	payment [label=Payment]
+	stirring -> payment
+}

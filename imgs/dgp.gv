@@ -1,0 +1,19 @@
+// Data Generating Process
+digraph dgp {
+	age [label=Age]
+	nationality [label=Nationality]
+	chef_rating [label="Chef rating"]
+	gas_stove [label="Gas stove"]
+	stirring [label=Stirring]
+	payment [label=Payment]
+	chef_rating -> gas_stove
+	age -> payment
+	age -> stirring
+	nationality -> payment
+	nationality -> stirring
+	chef_rating -> payment
+	chef_rating -> stirring
+	gas_stove -> payment
+	gas_stove -> stirring
+	stirring -> payment
+}

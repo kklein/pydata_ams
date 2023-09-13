@@ -1,0 +1,7 @@
+digraph prediction_failure {
+	stirring [label=Stirring]
+	payment [label=Payment]
+	chef_rating [label="Chef rating"]
+	chef_rating -> payment
+	chef_rating -> stirring
+}
