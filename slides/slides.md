@@ -403,7 +403,7 @@ Whatever the motivation of using different covariate sets inside a MetaLearner, 
 
 ---
 
-# Do you also prefer Causal Inference and critizing libraries over doing pretty slides?
+# Do you also prefer Causal Inference over aligning elements in slides?
 
 Join us :)
 https://www.quantco.com/
