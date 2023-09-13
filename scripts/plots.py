@@ -237,21 +237,23 @@ def plot_cate_estimates(rng):
 def plot_categorical_tree():
     """Plot an arbitrary lgbm tree with a categorical feature."""
     df = _df_risotto()
-    model = lgbm.LGBMRegressor(verbosity=-1, max_depth=3)
+    model = lgbm.LGBMRegressor(verbosity=-1, max_depth=2)
     model.fit(df[["nationality"]], df["payment"])
     fig, ax = plt.subplots(figsize=(15, 10))
     lgbm.plot_tree(model, ax=ax)
-    fig.savefig(_plot_root() / "categorical_tree.png")
+    fig.tight_layout()
+    fig.savefig(_plot_root() / "categorical_tree.png", transparent=True)
 
 
 def plot_numerical_tree():
     """Plot an arbitrary lgbm tree with a numerical feature."""
     df = _df_risotto()
-    model = lgbm.LGBMRegressor(verbosity=-1, max_depth=3)
+    model = lgbm.LGBMRegressor(verbosity=-1, max_depth=2)
     model.fit(df[["age"]], df["payment"])
     fig, ax = plt.subplots(figsize=(15, 10))
     lgbm.plot_tree(model, ax=ax)
-    fig.savefig(_plot_root() / "numerical_tree.png")
+    fig.tight_layout()
+    fig.savefig(_plot_root() / "numerical_tree.png", transparent=True)
 
 
 def _reg_rmse(
