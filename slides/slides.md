@@ -226,12 +226,6 @@ For more information see e.g. [Athey and Imbens, 2016](https://arxiv.org/pdf/160
 
 ## Risotto consumption: a simulation
 
-![bg left 80%](../imgs/dgp.gv.svg)
-
----
-
-## Risotto consumption: a simulation
-
 |    age | nationality | chef_rating | gas_stove | **$\mu(X)$** | $T$ | **$\tau(X)$** |   $Y$ |
 |-------:|:------------|------------:|----------:|---------:|----:|----------:|------:|
 |  50.77 | Indonesia   |        0.53 |         1 |    20.73 |   1 |      0.34 | 21.08 |
@@ -294,12 +288,13 @@ cate_estimates = model.predict(X)
 
 ---
 
-![bg left 120%](../imgs/numerical_tree.png)
+![bg left 90%](../imgs/numerical_tree.png)
 
 ---
 
-![bg 120%](../imgs/numerical_tree.png)
-![bg 120%](../imgs/categorical_tree.png)
+![bg 90%](../imgs/numerical_tree.png)
+![bg 90%](../imgs/categorical_tree.png)
+
 
 ---
 
@@ -310,62 +305,27 @@ cate_estimates = model.predict(X)
 
 ---
 
-## $P^3$ \#2: Reusing component models
+## $P^3$ \#2: Using already trained components
 
-* There are many free parameters when training meta learners:
-
-  1. Choose which meta learner (e.g. R-Learner)
-     - This is hard, see [Curth, van der Schar (2021)](https://proceedings.mlr.press/v130/curth21a.html)
-  2. Per estimand, choose an estimator (e.g. boosted trees)
-  3. Per estimator
-	 * per hyperparameter (e.g. depth), choose a value (e.g.12)
-
-* In practice, this often boils down to 'trying out' different constellations, e.g. via random search or grid search.
+<p float="left" align="middle">
+  <img src="../imgs/component.drawio.svg"/>
+  <img src="../imgs/component_reuse.drawio.svg" />
+</p>
 
 ---
 
-## The R-Learner
+## $P^3$ \#3: Predicting with components
 
-![100%](../imgs/rlearner1.drawio.svg)
-
----
-
-## The R-Learner
-
-![](../imgs/rlearner2.drawio.svg)
+<p float="left" align="middle">
+  <img src="../imgs/component.drawio.svg"/>
+  <img src="../imgs/component_eval.drawio.svg" />
+</p>
 
 ---
 
 
-## The R-Learner: Hyperparameter tuning
 
-![](../imgs/rlearner4.drawio.svg)
-
----
-
-## The R-Learner: Hyperparameter tuning
-
-![](../imgs/rlearner3.drawio.svg)
-
----
-
-
-## The R-Learner: Hyperparameter tuning
-
-![](../imgs/rlearner6.drawio.svg)
-
----
-
-## The R-Learner: Hyperparameter tuning
-
-* Unfortuntaely, I haven't found a supported way of reusing already trained components with most `EconML` and `CausalML` CATE estimators.
-  * See e.g. [EconML issue 646](https://github.com/py-why/EconML/issues/646).
-* We can expect a ~3x increase of runtime due to not being able to train and reuse component models.
-* This is even amplified when trying to use a particular component model for other MetaLearners.
-
----
-
-## $P^3$ \#3: Distinct covariate sets: Use case 1
+## $P^3$ \#4: Distinct covariate sets: Use case 1
 
 ![bg right 100%](../imgs/covariate_sets.drawio.svg)
 
@@ -374,7 +334,7 @@ cate_estimates = model.predict(X)
 
 ---
 
-## $P^3$ \#3: Distinct covariate sets: Use case 2
+## $P^3$ \#4: Distinct covariate sets: Use case 2
 * Let's assume we have 3 instead of 2 treatment variants.
 
 * | treatment variant 1 | treatment variant 2| covariates            |
@@ -387,19 +347,9 @@ cate_estimates = model.predict(X)
 
 ---
 
-## $P^3$ \#3: Distinct covariate sets
+## $P^3$ \#4: Distinct covariate sets
 
 Whatever the motivation of using different covariate sets inside a MetaLearner, afaict `CausalML` and `EconML` don't support them.
-
----
-
-## And more...
-
-* DoubleML: Biased final stage
-* Tricky to combine cross-fitting with further cross-splitting
-  (e.g. super learning or splits) -> also an engineering problem
-  (e.g. multiprocessing)
-* Read out treatment effects of categoricals when using DML
 
 ---
 
@@ -445,6 +395,13 @@ https://www.quantco.com/
 
 ---
 
+## Risotto consumption: a simulation
+
+![bg left 80%](../imgs/dgp.gv.svg)
+
+---
+
+
 ## How can we use categoricals with `lightgbm`?
 
 * Option 1: Use `pandas` `category` dtype
@@ -485,6 +442,57 @@ A hack is - of course - possible in order to indirectly use option 2:
   )
   ```
 
+---
+
+## The R-Learner
+
+![100%](../imgs/rlearner1.drawio.svg)
+
+---
+
+## The R-Learner
+
+![](../imgs/rlearner2.drawio.svg)
+
+---
+
+
+## The R-Learner: Hyperparameter tuning
+
+![](../imgs/rlearner4.drawio.svg)
+
+---
+
+## The R-Learner: Hyperparameter tuning
+
+![](../imgs/rlearner3.drawio.svg)
+
+---
+
+
+## The R-Learner: Hyperparameter tuning
+
+![](../imgs/rlearner6.drawio.svg)
+
+---
+
+## The R-Learner: Hyperparameter tuning
+
+* Unfortuntaely, I haven't found a supported way of reusing already trained components with most `EconML` and `CausalML` CATE estimators.
+  * See e.g. [EconML issue 646](https://github.com/py-why/EconML/issues/646).
+* We can expect a ~3x increase of runtime due to not being able to train and reuse component models.
+* This is even amplified when trying to use a particular component model for other MetaLearners.
+
+
+---
+
+## And more...
+
+* DoubleML: Biased final stage
+* Tricky to combine cross-fitting with further cross-splitting
+  (e.g. super learning or splits) -> also an engineering problem
+  (e.g. multiprocessing)
+* Read out treatment effects of categoricals when using DML
 
 ---
 
