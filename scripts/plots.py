@@ -167,6 +167,10 @@ def _treatment_effect_hist():
     fig, ax = plt.subplots()
     n, _, patches = ax.hist(df["treatment_effect"], bins=20)
     ax.set_xlabel("$\\tau$: difference in payment \n (treatment effect)")
+
+    for item in ([ax.title, ax.xaxis.label,] +
+             ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(22)
     return fig, ax, n, patches
 
 
@@ -193,8 +197,10 @@ def plot_treatment_effects(threshold: int) -> None:
             Patch(facecolor="green", edgecolor="green", label="profitable"),
             Patch(facecolor="red", edgecolor="red", label="loss-making"),
             Patch(facecolor="grey", edgecolor="grey", label="on the edge"),
-        ]
+        ],
+        prop={"size": 22},
     )
+
     fig.tight_layout()
     fig.savefig(_plot_root() / "treatment_effects_2.png")
 
