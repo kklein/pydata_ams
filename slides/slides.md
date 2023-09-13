@@ -84,8 +84,6 @@ What happens when we intervene on a data point from the left, i.e. `stirring = 0
   <img src="../imgs/why_prediction_fails_2.png" width="500" />
 </p>
 
-
-
 ---
 
 # 2. Why care about heterogeneity?
@@ -150,8 +148,7 @@ If we had the following kind of information, everything would be nice and easy. 
 * We can't know the Individual Treatment Effect (ITE).
 * Yet, we can define an estimand, the Conditional Average Treatment Effect
   (CATE), which we can actually estimate:
-  $\tau(X) := \mathbb{E}[\text{payment}|X\text{, stirring}] -
-  \mathbb{E}[\text{payment}|X\text{, no stirring}]$
+  $$\tau(X) := \mathbb{E}[Y_{\text{stirring}} - Y_{\text{no stirring}}|X]$$
 * In most of the literature 'CATE' and 'heterogeneous treatment effect' are used as synonyms.
 
 ---
@@ -181,8 +178,8 @@ For more information see e.g. [Athey and Imbens, 2016](https://arxiv.org/pdf/160
 
 ![bg left 80%](../imgs/metalearner.drawio.svg)
 
-* $X$: Covariates/features
 * $T$: Treatment assignments
+* $X$: Covariates/features
 * $Y$: Observed outcomes
 * $\hat{\tau}(X)$: Estimate of the heterogeneous treatment effect/CATE
 
@@ -235,7 +232,7 @@ For more information see e.g. [Athey and Imbens, 2016](https://arxiv.org/pdf/160
 
 ## Risotto consumption: a simulation
 
-|    age | nationality | chef_rating | gas_stove | $\mu(X)$ | $T$ | $\tau(X)$ |   $Y$ |
+|    age | nationality | chef_rating | gas_stove | **$\mu(X)$** | $T$ | **$\tau(X)$** |   $Y$ |
 |-------:|:------------|------------:|----------:|---------:|----:|----------:|------:|
 |  50.77 | Indonesia   |        0.53 |         1 |    20.73 |   1 |      0.34 | 21.08 |
 |  59.48 | Iraq        |        0.46 |         0 |    20.46 |   0 |      0.76 | 20.46 |
@@ -293,7 +290,7 @@ cate_estimates = model.predict(X)
 
 * `lightgbm` is a very popular choice for prediction on tabular datasets.
 * In particular, it has native support for working with categorical features.
-  E.g. instead of having to one-hot encode categoricals, one can indicate that a column is to be treated as a categorical.
+  **Instead of** having to **one-hot encode** categoricals, one can indicate that a column is to be treated as a categorical.
 
 ---
 
@@ -310,47 +307,6 @@ cate_estimates = model.predict(X)
 
 ![](../imgs/one-hot-vs-categorical.png)
 
----
-
-## How can we actually use these categoricals with `lightgbm`?
-
-* Option 1: Use `pandas` `category` dtype
-
-  ```python
-  df["nationality"] = df["nationality"].astype("category")
-  model = lgbm.LGBMRegressor()
-  model.fit(df[["nationality"]], df["payment"])
-  ```
-
-* Option 2: Explicitly set `categorical_indices`
-  ```python
-  df["nationality"] = df["nationality"].astype("category").cat.codes
-  model = lgbm.LGBMRegressor(categorical_feature=[0])
-  model.fit(df[["nationality"]], df["payment"])
-  ```
-
----
-
-## How using `lightgbm`'s categoricals in `EconML` and `CausalML`?
-
-* Unfortunately, both options don't work with `CausalML` and `EconML`.
-* Option 1 is not possible since both convert `pandas` input to `numpy` objects:
-  - `X, treatment, y = convert_pd_to_np(X, treatment, y)`
-  - https://github.com/uber/causalml/blob/3b3daaa3cd2ef1960028908c152cfd242b37712c/causalml/inference/meta/rlearner.py#L100
-* Option 2 is not possible since constructor parameters can't be
-  passed.
-
----
-
-A hack is - of course - possible in order to indirectly use option 2:
-  ```python
-  from functools import partialmethod
-  from lightgbm import LGBMRegressor
-  LGBMRegressor.fit = partialmethod(
-    LGBMRegressor.fit,
-    categorical_feature=[0],
-  )
-  ```
 
 ---
 
@@ -470,6 +426,9 @@ https://www.quantco.com/
 
 ---
 
+# Addendum
+
+---
 
 ## To stir or not to stir, the maths
 
@@ -483,6 +442,49 @@ https://www.quantco.com/
   * We can condition on certain 'covariates'/features to decide for whom it
     pays off.
   * When doing this 'right', we get that $\delta_{\pi} > k \cdot 1$.
+
+---
+
+## How can we use categoricals with `lightgbm`?
+
+* Option 1: Use `pandas` `category` dtype
+
+  ```python
+  df["nationality"] = df["nationality"].astype("category")
+  model = lgbm.LGBMRegressor()
+  model.fit(df[["nationality"]], df["payment"])
+  ```
+
+* Option 2: Explicitly set `categorical_indices`
+  ```python
+  df["nationality"] = df["nationality"].astype("category").cat.codes
+  model = lgbm.LGBMRegressor(categorical_feature=[0])
+  model.fit(df[["nationality"]], df["payment"])
+  ```
+
+---
+
+## How can we use `lightgbm`'s categoricals in `EconML` and `CausalML`?
+
+* Unfortunately, both options don't work with `CausalML` and `EconML`.
+* Option 1 is not possible since both convert `pandas` input to `numpy` objects:
+  - `X, treatment, y = convert_pd_to_np(X, treatment, y)`
+  - https://github.com/uber/causalml/blob/3b3daaa3cd2ef1960028908c152cfd242b37712c/causalml/inference/meta/rlearner.py#L100
+* Option 2 is not possible since constructor parameters can't be
+  passed.
+
+---
+
+A hack is - of course - possible in order to indirectly use option 2:
+  ```python
+  from functools import partialmethod
+  from lightgbm import LGBMRegressor
+  LGBMRegressor.fit = partialmethod(
+    LGBMRegressor.fit,
+    categorical_feature=[0],
+  )
+  ```
+
 
 ---
 
